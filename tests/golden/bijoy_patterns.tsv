@@ -1,0 +1,22 @@
+# Common Bijoy typing patterns (visual order), checked through the composer.
+# Columns: keys<TAB>expected<TAB>pattern   (uppercase = Shift + key)
+d k A	র্তি	reph + pre-kar (কীর্তি-র র্তি)
+c k A f	র্তো	ে + cluster + reph + া
+c k f A	র্তো	ে + cluster + া + reph
+y & f	চাঁ	chandrabindu typed BEFORE the aa-kar
+y f &	চাঁ	chandrabindu typed after the aa-kar
+j z s	ক্রু	ra-phala + u-kar
+h Z f	ব্যা	ya-phala + aa-kar
+c h Z f	ব্যো	ya-phala inside ো
+d j z	ক্রি	pre-kar before consonant + ra-phala
+k g k s	ত্তু	conjunct + u-kar
+n g k z	স্ত্র	three-part conjunct with ra-phala
+j g N g m	ক্ষ্ম	nested conjunct
+g d	ই	G + ি = ই
+F f	আ	অ + া = আ
+F Q	অং	অ + ং
+f	া	lone aa-kar (no consonant)
+o f Q V f	গাংলা	ং mid-word
+c i f	হো	ো
+C i	হৈ	ৈ
+k s A	র্তু	reph after u-kar

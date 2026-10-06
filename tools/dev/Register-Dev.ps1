@@ -59,6 +59,16 @@ foreach ($t in $targets) {
     if ($p.ExitCode -ne 0) { $failed = $true }
 }
 
+if (-not $Unregister) {
+    # Running programs keep the DLL version they loaded until they restart.
+    $holders = Get-Process | Where-Object {
+        try { $_.Modules | Where-Object { $_.ModuleName -like 'JulyTip*' } } catch { $null }
+    } | Sort-Object ProcessName -Unique
+    foreach ($p in $holders) {
+        Write-Log ("RESTART NEEDED: {0} (pid {1}) still runs the previous version" -f $p.ProcessName, $p.Id)
+    }
+}
+
 if ($Unregister -and -not $failed -and (Test-Path $installDir)) {
     Remove-Item -Recurse -Force -Path $installDir -ErrorAction SilentlyContinue
     Write-Log "removed $installDir (files still loaded by running apps may remain until reboot)"

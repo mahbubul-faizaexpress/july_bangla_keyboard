@@ -87,15 +87,39 @@ inline std::vector<GoldenCase> readGolden(const char* path) {
     return cases;
 }
 
-// Types space-separated letter labels into the composer, then commits; returns all text
-// the host would have committed.
+struct KeyPress {
+    std::uint16_t scan = 0;
+    bool shift = false;
+};
+
+// US key label -> scan code + Shift: letters (uppercase = Shift), digits, the shifted
+// number-row symbols, and ` ~ ' " \ |.
+inline KeyPress keyFor(char label) {
+    if (label >= 'a' && label <= 'z') return {scanForLetter(label), false};
+    if (label >= 'A' && label <= 'Z') return {scanForLetter(static_cast<char>(label - 'A' + 'a')), true};
+    static constexpr std::string_view kDigits = "1234567890";
+    static constexpr std::string_view kShiftedDigits = "!@#$%^&*()";
+    if (const auto i = kDigits.find(label); i != std::string_view::npos) return {static_cast<std::uint16_t>(0x02 + i), false};
+    if (const auto i = kShiftedDigits.find(label); i != std::string_view::npos) return {static_cast<std::uint16_t>(0x02 + i), true};
+    switch (label) {
+    case '`': return {0x29, false};
+    case '~': return {0x29, true};
+    case '\'': return {0x28, false};
+    case '"': return {0x28, true};
+    case '\\': return {0x2B, false};
+    case '|': return {0x2B, true};
+    default: return {0, false};
+    }
+}
+
+// Types space-separated key labels into the composer, then commits; returns all text the
+// host would have committed.
 inline std::u16string typeKeys(Composer& composer, std::string_view keys) {
     std::u16string text;
     for (const char c : keys) {
         if (c == ' ') continue;
-        const bool shift = c >= 'A' && c <= 'Z';
-        const char lower = shift ? static_cast<char>(c - 'A' + 'a') : c;
-        text += composer.pressKey(scanForLetter(lower), shift).commit.view();
+        const KeyPress k = keyFor(c);
+        text += composer.pressKey(k.scan, k.shift).commit.view();
     }
     text += composer.commitAll().commit.view();
     return text;

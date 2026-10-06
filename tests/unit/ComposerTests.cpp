@@ -213,3 +213,7 @@ TEST_CASE("অ then া becomes আ, and Backspace returns to অ") {
     CHECK(expectText(r.commit.view(), u"\u0985", "অ committed before ি"));
     (void)c.commitAll();
 }
+
+TEST_CASE("golden: common Bijoy typing patterns") {
+    CHECK(runGolden(JULY_GOLDEN_DIR "/bijoy_patterns.tsv") == 20);
+}
