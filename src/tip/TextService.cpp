@@ -212,25 +212,31 @@ STDMETHODIMP TextService::OnCompositionTerminated(TfEditCookie, ITfComposition*)
 
 // --- Keys ------------------------------------------------------------------------------
 
-bool TextService::shouldHandle(WPARAM vk) const noexcept {
-    if (mode_ == InputMode::English || isModifierKey(vk)) return false;
-    // While composing, see every key: even keys passed to the application (Space, Enter,
-    // arrows, shortcuts) must first finalize the composition.
-    return composer_.composing();
-}
-
 STDMETHODIMP TextService::OnTestKeyDown(ITfContext*, WPARAM wParam, LPARAM lParam, BOOL* eaten) {
     if (eaten == nullptr) return E_INVALIDARG;
     *eaten = FALSE;
     if (mode_ == InputMode::English || isModifierKey(wParam)) return S_OK;
-    if (shouldHandle(wParam)) {
-        *eaten = TRUE;
+
+    if (wParam == VK_BACK || wParam == VK_ESCAPE) {
+        // Edit or cancel our own syllable; otherwise the application handles the key.
+        *eaten = composer_.composing() ? TRUE : FALSE;
         return S_OK;
     }
-    if (wParam == VK_BACK || keyDown(VK_CONTROL) || keyDown(VK_MENU)) return S_OK;
-    // Predict on a copy: OnTestKeyDown must not change state.
-    Composer probe = composer_;
-    *eaten = probe.pressKey(scanCode(lParam), keyDown(VK_SHIFT)).eaten ? TRUE : FALSE;
+    if (!keyDown(VK_CONTROL) && !keyDown(VK_MENU)) {
+        // Predict on a copy, so the engine itself is not changed here.
+        Composer probe = composer_;
+        if (probe.pressKey(scanCode(lParam), keyDown(VK_SHIFT)).eaten) {
+            *eaten = TRUE;
+            return S_OK;
+        }
+    }
+
+    // The key goes to the application (Enter, Space, arrows, shortcuts). Finalize the open
+    // syllable now, before the key is reported as not eaten. If the key were first claimed
+    // and only released in OnKeyDown, Chromium/Electron applications treat it as an IME
+    // key and can act on it (e.g. send a chat message on Enter) before the committed text
+    // arrives, losing the last syllable.
+    if (composer_.composing()) commitComposition();
     return S_OK;
 }
 

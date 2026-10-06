@@ -12,6 +12,7 @@ namespace {
 constexpr char16_t kSignE = u'ে';         // ে
 constexpr char16_t kSignAa = u'া';        // া
 constexpr char16_t kAuLengthMark = u'ৗ';  // ৗ
+constexpr char16_t kVowelA = u'অ';    // অ
 constexpr Token kLinkToken{TokenKind::Link, 1, {u'্'}};
 
 // Structural summary of the open syllable, recomputed from the key list (at most 16
@@ -26,6 +27,7 @@ struct Shape {
     std::uint8_t phalas = 0;
     std::uint8_t modifiers = 0;
     char16_t preUnit = 0;
+    char16_t independentUnit = 0;
 };
 
 Shape analyze(std::span<const KeyToken> keys) noexcept {
@@ -36,7 +38,7 @@ Shape analyze(std::span<const KeyToken> keys) noexcept {
         case TokenKind::VowelSignPre:     s.pre = true; s.preUnit = key.token.units[0]; break;
         case TokenKind::VowelSign:        s.post = true; break;
         case TokenKind::Reph:             s.reph = true; break;
-        case TokenKind::IndependentVowel: s.independent = true; break;
+        case TokenKind::IndependentVowel: s.independent = true; s.independentUnit = key.token.units[0]; break;
         case TokenKind::Phala:            ++s.phalas; break;
         case TokenKind::Modifier:         ++s.modifiers; break;
         default:                          break;
@@ -61,6 +63,11 @@ bool Composer::accepts(const Token& token) const noexcept {
     case TokenKind::Phala:
         return s.cluster && !s.endsWithLink && !s.post && s.modifiers == 0 && s.phalas < 2;
     case TokenKind::VowelSign:
+        // অ (Shift+F) then া (F) is how Bijoy typists commonly type আ (SutonnyMJ itself
+        // stores আ as অ + া, "Av"). Bijoy turns it into আ; so do we.
+        if (s.independent) {
+            return s.independentUnit == kVowelA && token.units[0] == kSignAa && !s.post && s.modifiers == 0;
+        }
         if (!s.cluster || s.endsWithLink || s.post) return false;
         // A pre-base kar only combines with the second half of a split vowel: ে + া = ো,
         // ে + ৗ = ৌ.

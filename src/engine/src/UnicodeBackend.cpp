@@ -19,6 +19,8 @@ constexpr char16_t kZwj = u'‍';
 constexpr char16_t kSignE = u'ে';         // ে
 constexpr char16_t kSignAa = u'া';        // া
 constexpr char16_t kAuLengthMark = u'ৗ';  // ৗ
+constexpr char16_t kVowelA = u'অ';        // অ
+constexpr char16_t kVowelAa = u'আ';       // আ
 constexpr char16_t kSignO = u'ো';         // ো (NFC of ে + া)
 constexpr char16_t kSignAu = u'ৌ';        // ৌ (NFC of ে + ৗ)
 
@@ -68,7 +70,13 @@ void renderUnicode(std::span<const KeyToken> keys, const ComposerOptions& option
         }
     }
 
-    out.append(leading.view());
+    if (post == kSignAa && leading.view() == std::u16string_view(&kVowelA, 1)) {
+        // অ + া typed as two keys is আ (the composer only allows this pairing).
+        out.push(kVowelAa);
+        post = 0;
+    } else {
+        out.append(leading.view());
+    }
     if (reph) {
         out.push(kRa);
         out.push(kHasant);

@@ -60,7 +60,7 @@ TEST_CASE("golden: independent vowels via the linker G (master rules table)") {
 }
 
 TEST_CASE("golden: Bijoy visual typing order (pre-base kar first, reph after)") {
-    CHECK(runGolden(JULY_GOLDEN_DIR "/bijoy_typing_order.tsv") == 10);
+    CHECK(runGolden(JULY_GOLDEN_DIR "/bijoy_typing_order.tsv") == 13);
 }
 
 // --- Composition behaviour -----------------------------------------------------------------
@@ -198,4 +198,18 @@ TEST_CASE("a syllable never grows past its fixed capacity") {
     std::size_t consonants = 0;
     for (char16_t ch : text) consonants += ch == u'ক' ? 1 : 0;
     CHECK(consonants == 20);
+}
+
+TEST_CASE("অ then া becomes আ, and Backspace returns to অ") {
+    Composer c;
+    EditResult r = press(c, 'F');
+    CHECK(expectText(r.composition.view(), u"\u0985", "অ"));
+    r = press(c, 'f');
+    CHECK(expectText(r.composition.view(), u"\u0986", "আ"));
+    r = c.backspace();
+    CHECK(expectText(r.composition.view(), u"\u0985", "back to অ"));
+    // Other vowel signs after অ do not combine: the sign starts a new syllable.
+    r = press(c, 'd');
+    CHECK(expectText(r.commit.view(), u"\u0985", "অ committed before ি"));
+    (void)c.commitAll();
 }

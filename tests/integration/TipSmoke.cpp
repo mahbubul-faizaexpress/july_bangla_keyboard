@@ -35,7 +35,7 @@ constexpr LONG kModeClassic = 2;
 
 struct Case {
     LONG mode;
-    const char* keys;  // letter labels; uppercase = Shift; '<' = Backspace
+    const char* keys;  // letter labels; uppercase = Shift; '<' Backspace, newline Enter, ' ' Space
     const wchar_t* expected;
     const char* name;
 };
@@ -50,6 +50,9 @@ const Case kCases[] = {
     {kModeUnicode, "hfQVfW", L"বাংলায়", "বাংলায়"},
     {kModeClassic, "gfdm", L"Avwg", "Classic আমি"},
     {kModeClassic, "jfcu", L"Kv‡R", "Classic কাজে"},
+    {kModeUnicode, "Ffdm", L"আমি", "অ + া = আ (আমি typed as Shift+F F D M)"},
+    {kModeUnicode, "clM\n", L"দেশ", "দেশ (C L Shift+M) + Enter: final before app sees it"},
+    {kModeUnicode, "jgN ", L"ক্ষ", "ক্ষ + Space: final before the app sees Space"},
     {kModeEnglish, "jfd", L"", "English mode passes keys through (not eaten)"},
 };
 
@@ -89,8 +92,10 @@ void setShift(bool down) {
     SetKeyboardState(state);
 }
 
-// Delivers one key to the text services; returns whether a text service ate it.
-bool sendKey(ITfKeystrokeMgr* keystrokes, UINT vk, bool shift) {
+// Delivers one key to the text services; returns whether a text service ate it. For a key
+// that is not eaten, `textBeforeApp` receives the control's text at the moment TSF hands
+// the key back, i.e. what the application would see when it processes the key.
+bool sendKey(ITfKeystrokeMgr* keystrokes, HWND edit, UINT vk, bool shift, std::wstring* textBeforeApp) {
     setShift(shift);
     const UINT scan = MapVirtualKeyW(vk, MAPVK_VK_TO_VSC);
     const LPARAM down = 1 | (static_cast<LPARAM>(scan) << 16);
@@ -98,6 +103,7 @@ bool sendKey(ITfKeystrokeMgr* keystrokes, UINT vk, bool shift) {
     BOOL eaten = FALSE;
     keystrokes->TestKeyDown(vk, down, &eaten);
     if (eaten) keystrokes->KeyDown(vk, down, &eaten);
+    if (!eaten && textBeforeApp != nullptr) *textBeforeApp = windowText(edit);
     BOOL upEaten = FALSE;
     keystrokes->TestKeyUp(vk, up, &upEaten);
     if (upEaten) keystrokes->KeyUp(vk, up, &upEaten);
@@ -192,23 +198,36 @@ int wmain() {
         hr = setMode(threadMgr.Get(), clientId, c.mode);
         if (FAILED(hr)) return fail("set mode compartment", hr);
 
-        bool allEaten = true;
+        bool typingKeysEaten = true;   // Bijoy keys must be taken by the text service
+        bool passThroughOk = true;     // Enter/Space must reach the app, after the commit
         bool anyEaten = false;
         for (const char* k = c.keys; *k != '\0'; ++k) {
-            const bool back = *k == '<';
+            const bool passThrough = *k == '\n' || *k == ' ';
             const bool shift = *k >= 'A' && *k <= 'Z';
-            const UINT vk = back ? VK_BACK : static_cast<UINT>(shift ? *k : *k - 'a' + 'A');
-            const bool eaten = sendKey(keystrokes.Get(), vk, shift);
-            allEaten = allEaten && eaten;
+            const UINT vk = *k == '<'  ? VK_BACK
+                            : *k == '\n' ? VK_RETURN
+                            : *k == ' '  ? VK_SPACE
+                                         : static_cast<UINT>(shift ? *k : *k - 'a' + 'A');
+            std::wstring textBeforeApp;
+            const bool eaten = sendKey(keystrokes.Get(), edit, vk, shift, &textBeforeApp);
             anyEaten = anyEaten || eaten;
+            if (passThrough) {
+                // The syllable must already be final when the application gets the key.
+                passThroughOk = passThroughOk && !eaten && textBeforeApp == c.expected;
+            } else {
+                typingKeysEaten = typingKeysEaten && eaten;
+            }
         }
         const std::wstring text = windowText(edit);
         // English mode must not eat keys (the application types them itself); here no
         // application handles them, so the control stays empty.
-        const bool ok = c.mode == kModeEnglish ? (!anyEaten && text.empty()) : (allEaten && text == c.expected);
+        const bool ok = c.mode == kModeEnglish ? (!anyEaten && text.empty())
+                                               : (typingKeysEaten && passThroughOk && text == c.expected);
         std::printf("%s  %-46s got [%s]\n", ok ? "PASS" : "FAIL", c.name, hex(text).c_str());
         if (!ok) {
-            std::printf("      expected [%s]%s\n", hex(c.expected).c_str(), allEaten ? "" : " (some keys not eaten)");
+            std::printf("      expected [%s]%s%s\n", hex(c.expected).c_str(),
+                        typingKeysEaten ? "" : " (some typing keys not eaten)",
+                        passThroughOk ? "" : " (Enter/Space eaten, or text not final before the app saw it)");
             ++failures;
         }
     }

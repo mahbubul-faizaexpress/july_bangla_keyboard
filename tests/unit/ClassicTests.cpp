@@ -46,7 +46,7 @@ TEST_CASE("classic golden: Bijoy keys produce the exact SutonnyMJ glyph codes") 
         CHECK(roundTripsCp1252(actual));
         ++cases;
     }
-    CHECK(cases == 24);
+    CHECK(cases == 25);
 }
 
 TEST_CASE("classic: every glyph in the table round-trips through code page 1252") {

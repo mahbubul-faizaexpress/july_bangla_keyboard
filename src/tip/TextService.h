@@ -62,7 +62,6 @@ public:
 private:
     ~TextService() = default;
 
-    bool shouldHandle(WPARAM vk) const noexcept;
     EditResult process(WPARAM vk, LPARAM lParam) noexcept;
     HRESULT apply(ITfContext* context, const EditResult& result) noexcept;
     void commitComposition() noexcept;
