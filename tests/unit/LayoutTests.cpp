@@ -61,7 +61,7 @@ constexpr Expect kExpected[] = {
     {0x21, KeyLayer::Link, TokenKind::IndependentVowel, u"আ"},   // আ
     {0x22, KeyLayer::Normal, TokenKind::Link, u"্"},             // ্
     {0x22, KeyLayer::Shift, TokenKind::Punct, u"।"},             // ।
-    {0x22, KeyLayer::Link, TokenKind::Punct, u"॥"},              // ॥
+    {0x22, KeyLayer::LinkShift, TokenKind::Punct, u"॥"},    // ॥ (G + Shift+G)
     {0x23, KeyLayer::Normal, TokenKind::Consonant, u"ব"},        // ব
     {0x23, KeyLayer::Shift, TokenKind::Consonant, u"ভ"},         // ভ
     {0x24, KeyLayer::Normal, TokenKind::Consonant, u"ক"},        // ক
@@ -77,7 +77,7 @@ constexpr Expect kExpected[] = {
     {0x2C, KeyLayer::Shift, TokenKind::Phala, u"্য"},       // ্য
     {0x2D, KeyLayer::Normal, TokenKind::IndependentVowel, u"ও"}, // ও
     {0x2D, KeyLayer::Shift, TokenKind::VowelSign, u"ৗ"},         // ৗ
-    {0x2D, KeyLayer::Link, TokenKind::IndependentVowel, u"ঔ"},   // ঔ
+    {0x2D, KeyLayer::LinkShift, TokenKind::IndependentVowel, u"ঔ"},  // ঔ (G + Shift+X)
     {0x2E, KeyLayer::Normal, TokenKind::VowelSignPre, u"ে"},     // ে
     {0x2E, KeyLayer::Shift, TokenKind::VowelSignPre, u"ৈ"},      // ৈ
     {0x2E, KeyLayer::Link, TokenKind::IndependentVowel, u"এ"},   // এ
@@ -93,6 +93,11 @@ constexpr Expect kExpected[] = {
     // Shifted number row: 4 = 0x05, 7 = 0x08
     {0x05, KeyLayer::Shift, TokenKind::Punct, u"৳"},             // ৳
     {0x08, KeyLayer::Shift, TokenKind::Modifier, u"ঁ"},          // ঁ
+    // Quote keys: ` = 0x29, ' = 0x28
+    {0x29, KeyLayer::Normal, TokenKind::Punct, u"‘"},       // ‘
+    {0x29, KeyLayer::Shift, TokenKind::Punct, u"“"},        // “
+    {0x28, KeyLayer::Normal, TokenKind::Punct, u"’"},       // ’
+    {0x28, KeyLayer::Shift, TokenKind::Punct, u"”"},        // ”
 };
 
 // Scan codes for the conjunct golden file's key labels (restated independently).
@@ -163,14 +168,19 @@ TEST_CASE("digit keys produce Bengali digits") {
 TEST_CASE("unmapped and out-of-range keys return a None token") {
     CHECK(july::lookupBijoyKey(0x39, KeyLayer::Normal).kind == TokenKind::None);  // space
     CHECK(july::lookupBijoyKey(0x24, KeyLayer::Link).kind == TokenKind::None);    // g then j: no link form
-    CHECK(july::lookupBijoyKey(0x2D, KeyLayer::LinkShift).kind == TokenKind::None);  // ঔ is g+x, not g+X
+    CHECK(july::lookupBijoyKey(0x2D, KeyLayer::Link).kind == TokenKind::None);   // ঔ is G+Shift+X, not G+X
+    CHECK(july::lookupBijoyKey(0x22, KeyLayer::Link).kind == TokenKind::None);   // ॥ is G+Shift+G, not G+G
     CHECK(july::lookupBijoyKey(0x80, KeyLayer::Normal).kind == TokenKind::None);
     CHECK(july::lookupBijoyKey(0xFFFF, KeyLayer::Shift).kind == TokenKind::None);
     CHECK(july::lookupBijoyKey(0x24, static_cast<KeyLayer>(9)).kind == TokenKind::None);
 }
 
-TEST_CASE("golden conjunct sequences: key tokens concatenate to the expected text") {
-    std::ifstream in(JULY_GOLDEN_DIR "/bijoy_conjuncts.tsv", std::ios::binary);
+namespace {
+
+// Phase 2 stand-in for the composer: concatenates key tokens, except that the linker 'g'
+// followed by a key with a link-layer form yields that form (e.g. g d -> ই).
+int runGoldenFile(const char* path) {
+    std::ifstream in(path, std::ios::binary);
     CHECK(in.good());
     int cases = 0;
     for (std::string line; std::getline(in, line);) {
@@ -185,18 +195,39 @@ TEST_CASE("golden conjunct sequences: key tokens concatenate to the expected tex
         const std::u16string expected = utf8ToUtf16(std::string_view(line).substr(tab1 + 1, tab2 - tab1 - 1));
 
         std::u16string actual;
-        for (std::size_t i = 0; i < keys.size(); ++i) {
-            const char c = keys[i];
+        bool linkPending = false;
+        for (const char c : keys) {
             if (c == ' ') continue;
             const bool shift = c >= 'A' && c <= 'Z';
             const char lower = shift ? static_cast<char>(c - 'A' + 'a') : c;
-            const july::Token& t = july::lookupBijoyKey(scanForLetter(lower), shift ? KeyLayer::Shift : KeyLayer::Normal);
+            const std::uint16_t scan = scanForLetter(lower);
+            if (linkPending) {
+                const july::Token& linked = july::lookupBijoyKey(scan, shift ? KeyLayer::LinkShift : KeyLayer::Link);
+                linkPending = false;
+                if (linked.kind != TokenKind::None) {
+                    actual.pop_back();  // the linker's hasant is replaced by the linked form
+                    actual += linked.text();
+                    continue;
+                }
+            }
+            const july::Token& t = july::lookupBijoyKey(scan, shift ? KeyLayer::Shift : KeyLayer::Normal);
             actual += t.text();
+            linkPending = t.kind == TokenKind::Link;
         }
         const bool ok = actual == expected;
         if (!ok) std::fprintf(stderr, "  golden mismatch for keys '%s'\n", keys.c_str());
         CHECK(ok);
         ++cases;
     }
-    CHECK(cases == 16);
+    return cases;
+}
+
+} // namespace
+
+TEST_CASE("golden conjunct sequences produce the exact expected code points") {
+    CHECK(runGoldenFile(JULY_GOLDEN_DIR "/bijoy_conjuncts.tsv") == 16);
+}
+
+TEST_CASE("golden linker-vowel sequences produce the exact expected code points") {
+    CHECK(runGoldenFile(JULY_GOLDEN_DIR "/bijoy_link_vowels.tsv") == 12);
 }

@@ -7,8 +7,12 @@
 #   layer     normal | shift | link | link-shift   (link = after the linker key 'g')
 #   kind      consonant | final | link | vowel-sign | vowel-sign-pre | independent-vowel |
 #             modifier | phala | reph | digit | punct
-#   source    chart     = Bijoy keyboard chart, 3rd edition ("বিজয় বাংলা কীবোর্ড, তৃতীয়
-#                         সংস্করণ"; images supplied by the user 2026-10-06), read from the key cap
+#   source    chart     = read from the key caps and cross-checked across three charts
+#                         supplied by the user on 2026-10-06:
+#                         (a) "বিজয় বাংলা কীবোর্ড, তৃতীয় সংস্করণ" (official chart),
+#                         (b) a Unicode Bijoy chart with link forms shown separately,
+#                         (c) Marks PC Solution chart + typing-rules table
+#                         A row is "chart" only if no chart contradicts it.
 #             user-list = conjunct key sequences supplied by the user
 #             memory    = engineer's recollection; NOT confirmed. Rejected by --strict
 #                         (release) until confirmed against a reference.
@@ -57,7 +61,7 @@ f  shift       independent-vowel  chart  U+0985   # অ
 f  link        independent-vowel  chart  U+0986   # আ
 g  normal      link               chart  U+09CD   # ্ (linker / hasant)
 g  shift       punct              chart  U+0964   # । (dari)
-g  link        punct              chart  U+0965   # ॥ (double dari)
+g  link-shift  punct              chart  U+0965   # ॥ (double dari)
 h  normal      consonant          chart  U+09AC   # ব
 h  shift       consonant          chart  U+09AD   # ভ
 j  normal      consonant          chart  U+0995   # ক
@@ -66,8 +70,9 @@ k  normal      consonant          chart  U+09A4   # ত
 k  shift       consonant          chart  U+09A5   # থ
 l  normal      consonant          chart  U+09A6   # দ
 l  shift       consonant          chart  U+09A7   # ধ
-# The chart prints ৎ / ঃ on the key left of Enter without a Latin label; mapped to the
-# US backslash key (to confirm with a Bijoy typist: backslash or apostrophe key?).
+'  normal      punct              chart  U+2019   # ’
+'  shift       punct              chart  U+201D   # ”
+# ৎ / ঃ are on the backslash key (right of ']' on the 104-key charts).
 \  normal      final              chart  U+09CE   # ৎ
 \  shift       modifier           chart  U+0983   # ঃ
 
@@ -76,7 +81,7 @@ z  normal      phala              chart  U+09CD U+09B0   # ্র (ra-phala)
 z  shift       phala              chart  U+09CD U+09AF   # ্য (ya-phala)
 x  normal      independent-vowel  chart  U+0993   # ও
 x  shift       vowel-sign         chart  U+09D7   # ৗ (au length mark; ে + ৗ = ৌ)
-x  link        independent-vowel  chart  U+0994   # ঔ
+x  link-shift  independent-vowel  chart  U+0994   # ঔ (G + Shift+X)
 c  normal      vowel-sign-pre     chart  U+09C7   # ে
 c  shift       vowel-sign-pre     chart  U+09C8   # ৈ
 c  link        independent-vowel  chart  U+098F   # এ
@@ -91,6 +96,8 @@ m  normal      consonant          chart  U+09AE   # ম
 m  shift       consonant          chart  U+09B6   # শ
 
 # --- Number row ---------------------------------------------------------------------
+`  normal  punct     chart  U+2018   # ‘
+`  shift   punct     chart  U+201C   # “
 1  normal  digit     chart  U+09E7   # ১
 2  normal  digit     chart  U+09E8   # ২
 3  normal  digit     chart  U+09E9   # ৩
@@ -104,6 +111,6 @@ m  shift       consonant          chart  U+09B6   # শ
 4  shift   punct     chart  U+09F3   # ৳
 7  shift   modifier  chart  U+0981   # ঁ
 
-# Not mapped yet: link layers of the number row and of ; , . (rare signs drawn in the
-# legacy font, not reliably identifiable), Shift+6, and the ` ~ key.
+# Not mapped yet: link layers of the number row and of , . (rare signs such as fractions
+# and Assamese ৰ ৱ; the charts disagree or are unreadable), and Shift+6.
 # Unmapped keys pass through to the application unchanged.

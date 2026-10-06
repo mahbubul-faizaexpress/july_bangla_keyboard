@@ -1,0 +1,17 @@
+# Independent vowels typed with the linker G (from the Marks PC Solution typing-rules
+# table, cross-checked with the Unicode Bijoy chart; supplied by the user 2026-10-06).
+# Columns: keys<TAB>expected<TAB>note
+#   keys: space-separated US key labels; an uppercase letter means Shift + that key.
+# Phase 2 resolves "g <key>" through the key's link layer; Phase 3 runs the composer.
+g f	আ	G + া
+g d	ই	G + ি
+g D	ঈ	G + ী
+g s	উ	G + ু
+g S	ঊ	G + ূ
+g a	ঋ	G + ৃ
+g c	এ	G + ে
+g C	ঐ	G + ৈ
+x	ও	X alone
+g X	ঔ	G + Shift + ৗ
+F	অ	Shift + F
+g G	॥	G + Shift + G

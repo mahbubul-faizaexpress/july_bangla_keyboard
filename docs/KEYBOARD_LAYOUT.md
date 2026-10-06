@@ -22,23 +22,36 @@ Every row carries a `source`:
 
 | source | meaning | release builds (`-DSTRICT_LAYOUT=ON`) |
 |---|---|---|
-| `chart` | read from the Bijoy keyboard chart, 3rd edition ("বিজয় বাংলা কীবোর্ড, তৃতীয় সংস্করণ") | allowed |
+| `chart` | read from the key caps; no reference chart contradicts it (see below) | allowed |
 | `user-list` | from the user-supplied conjunct sequences | allowed |
 | `memory` | engineer's recollection, not yet confirmed | **rejected** |
 
-All 76 rows are currently confirmed against the chart. One row was corrected during
-confirmation: ঔ is `g` + `x` (link layer), not `g` + Shift+`x`.
+**Reference charts** (all supplied by the user on 2026-10-06):
 
-**Open question:** the chart prints ৎ / ঃ on the key left of Enter, without a Latin label.
-It is mapped to the US backslash key; a Bijoy typist should confirm that it is not the
-apostrophe key.
+- (a) the official "বিজয় বাংলা কীবোর্ড, তৃতীয় সংস্করণ" chart
+- (b) a Unicode Bijoy chart that shows the link forms separately
+- (c) the Marks PC Solution chart with its typing-rules table
+
+All 80 rows are confirmed. Chart (a) puts some link forms at mid-height on the key cap,
+which makes them easy to misread. Charts (b) and (c) settle those cases:
+
+- ঔ = `g` + Shift+`x`
+- ॥ = `g` + Shift+`g`
+- ৎ / ঃ are on the backslash key
 
 The following are not mapped yet, so they pass through to the application unchanged:
 
-- the link layers of the number row and of the `;` `,` `.` keys (rare signs drawn in the
-  legacy font that cannot be identified reliably from the chart)
+- the link layers of the number row and of the `,` `.` keys (fractions, Assamese ৰ ৱ;
+  the charts disagree or are unreadable)
 - Shift+6
-- the `` ` `` / `~` key
+
+## Rules from the typing-rules table (c), for the Phase 3 composer
+
+- Shift selects the upper letter on a key. The linker `g` joins consonants, e.g.
+  হ্ন = `i g b`.
+- Vowel signs, ্য and ্র are never joined with `g`. They follow the consonant directly,
+  e.g. কৃ = ক + ৃ, ব্যা = ব + ্য + া.
+- Caps Lock must be off in Bijoy. The engine ignores Caps Lock and uses only Shift.
 
 > The two other chart images supplied together with the Bijoy chart show a **different
 > layout**, not Bijoy (for example K = ক, `/` = hasant). They are not used.
