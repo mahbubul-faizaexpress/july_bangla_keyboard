@@ -22,25 +22,23 @@ Every row carries a `source`:
 
 | source | meaning | release builds (`-DSTRICT_LAYOUT=ON`) |
 |---|---|---|
-| `photo3` | read from the Bijoy keyboard chart, 3rd edition | allowed |
+| `chart` | read from the Bijoy keyboard chart, 3rd edition ("বিজয় বাংলা কীবোর্ড, তৃতীয় সংস্করণ") | allowed |
 | `user-list` | from the user-supplied conjunct sequences | allowed |
 | `memory` | engineer's recollection, not yet confirmed | **rejected** |
 
-These rows are currently `memory` and need confirmation:
+All 76 rows are currently confirmed against the chart. One row was corrected during
+confirmation: ঔ is `g` + `x` (link layer), not `g` + Shift+`x`.
 
-- Shift+G (।)
-- x (ও)
-- Shift+X (ৗ)
-- link-shift X (ঔ)
-- Shift+4 (৳)
-- Shift+7 (ঁ)
+**Open question:** the chart prints ৎ / ঃ on the key left of Enter, without a Latin label.
+It is mapped to the US backslash key; a Bijoy typist should confirm that it is not the
+apostrophe key.
 
 The following are not mapped yet, so they pass through to the application unchanged:
 
-- Shift+A
-- the link layer of `x`
-- the other shifted number-row symbols
-- the `` ` `` `,` `.` keys and their shifted forms
+- the link layers of the number row and of the `;` `,` `.` keys (rare signs drawn in the
+  legacy font that cannot be identified reliably from the chart)
+- Shift+6
+- the `` ` `` / `~` key
 
 > The two other chart images supplied together with the Bijoy chart show a **different
 > layout**, not Bijoy (for example K = ক, `/` = hasant). They are not used.

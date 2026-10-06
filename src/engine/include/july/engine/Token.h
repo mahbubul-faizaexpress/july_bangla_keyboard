@@ -18,6 +18,7 @@ enum class TokenKind : std::uint8_t {
     IndependentVowel,  // অ আ ই … ও ঔ
     Modifier,          // ং ঃ ঁ
     Phala,             // ্র ্য (hasant + consonant as one key)
+    Reph,              // র্ (র + hasant as one key)
     Digit,             // ০–৯
     Punct,             // । ৳ …
 };

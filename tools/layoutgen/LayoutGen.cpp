@@ -68,12 +68,13 @@ const std::map<std::string_view, std::string_view> kKinds = {
     {"independent-vowel", "TokenKind::IndependentVowel"},
     {"modifier", "TokenKind::Modifier"},
     {"phala", "TokenKind::Phala"},
+    {"reph", "TokenKind::Reph"},
     {"digit", "TokenKind::Digit"},
     {"punct", "TokenKind::Punct"},
 };
 
 const std::map<std::string_view, std::string_view> kSources = {
-    {"photo3", "LayoutSource::Photo3"},
+    {"chart", "LayoutSource::Chart"},
     {"user-list", "LayoutSource::UserList"},
     {"memory", "LayoutSource::Memory"},
 };

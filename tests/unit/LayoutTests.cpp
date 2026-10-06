@@ -11,7 +11,8 @@ using july::TokenKind;
 
 namespace {
 
-// Expectations are restated here by hand from the Bijoy 3rd-edition chart, with scan
+// Expectations are restated here by hand from the Bijoy 3rd-edition chart (the
+// high-resolution image supplied 2026-10-06), with scan
 // codes written independently of layoutgen's key-name table, so a mistake in either the
 // layout file or the generator shows up as a mismatch.
 struct Expect {
@@ -45,6 +46,7 @@ constexpr Expect kExpected[] = {
     {0x19, KeyLayer::Shift, TokenKind::Consonant, u"ঢ়"},   // ঢ়
     // Home row: A S D F G H J K L = 0x1E..0x26, \ = 0x2B
     {0x1E, KeyLayer::Normal, TokenKind::VowelSign, u"ৃ"},        // ৃ
+    {0x1E, KeyLayer::Shift, TokenKind::Reph, u"র্"},        // র্
     {0x1E, KeyLayer::Link, TokenKind::IndependentVowel, u"ঋ"},   // ঋ
     {0x1F, KeyLayer::Normal, TokenKind::VowelSign, u"ু"},        // ু
     {0x1F, KeyLayer::Shift, TokenKind::VowelSign, u"ূ"},         // ূ
@@ -58,6 +60,8 @@ constexpr Expect kExpected[] = {
     {0x21, KeyLayer::Shift, TokenKind::IndependentVowel, u"অ"},  // অ
     {0x21, KeyLayer::Link, TokenKind::IndependentVowel, u"আ"},   // আ
     {0x22, KeyLayer::Normal, TokenKind::Link, u"্"},             // ্
+    {0x22, KeyLayer::Shift, TokenKind::Punct, u"।"},             // ।
+    {0x22, KeyLayer::Link, TokenKind::Punct, u"॥"},              // ॥
     {0x23, KeyLayer::Normal, TokenKind::Consonant, u"ব"},        // ব
     {0x23, KeyLayer::Shift, TokenKind::Consonant, u"ভ"},         // ভ
     {0x24, KeyLayer::Normal, TokenKind::Consonant, u"ক"},        // ক
@@ -71,6 +75,9 @@ constexpr Expect kExpected[] = {
     // Bottom row: Z X C V B N M = 0x2C..0x32
     {0x2C, KeyLayer::Normal, TokenKind::Phala, u"্র"},      // ্র
     {0x2C, KeyLayer::Shift, TokenKind::Phala, u"্য"},       // ্য
+    {0x2D, KeyLayer::Normal, TokenKind::IndependentVowel, u"ও"}, // ও
+    {0x2D, KeyLayer::Shift, TokenKind::VowelSign, u"ৗ"},         // ৗ
+    {0x2D, KeyLayer::Link, TokenKind::IndependentVowel, u"ঔ"},   // ঔ
     {0x2E, KeyLayer::Normal, TokenKind::VowelSignPre, u"ে"},     // ে
     {0x2E, KeyLayer::Shift, TokenKind::VowelSignPre, u"ৈ"},      // ৈ
     {0x2E, KeyLayer::Link, TokenKind::IndependentVowel, u"এ"},   // এ
@@ -83,6 +90,9 @@ constexpr Expect kExpected[] = {
     {0x31, KeyLayer::Shift, TokenKind::Consonant, u"ষ"},         // ষ
     {0x32, KeyLayer::Normal, TokenKind::Consonant, u"ম"},        // ম
     {0x32, KeyLayer::Shift, TokenKind::Consonant, u"শ"},         // শ
+    // Shifted number row: 4 = 0x05, 7 = 0x08
+    {0x05, KeyLayer::Shift, TokenKind::Punct, u"৳"},             // ৳
+    {0x08, KeyLayer::Shift, TokenKind::Modifier, u"ঁ"},          // ঁ
 };
 
 // Scan codes for the conjunct golden file's key labels (restated independently).
@@ -153,6 +163,7 @@ TEST_CASE("digit keys produce Bengali digits") {
 TEST_CASE("unmapped and out-of-range keys return a None token") {
     CHECK(july::lookupBijoyKey(0x39, KeyLayer::Normal).kind == TokenKind::None);  // space
     CHECK(july::lookupBijoyKey(0x24, KeyLayer::Link).kind == TokenKind::None);    // g then j: no link form
+    CHECK(july::lookupBijoyKey(0x2D, KeyLayer::LinkShift).kind == TokenKind::None);  // ঔ is g+x, not g+X
     CHECK(july::lookupBijoyKey(0x80, KeyLayer::Normal).kind == TokenKind::None);
     CHECK(july::lookupBijoyKey(0xFFFF, KeyLayer::Shift).kind == TokenKind::None);
     CHECK(july::lookupBijoyKey(0x24, static_cast<KeyLayer>(9)).kind == TokenKind::None);

@@ -6,9 +6,9 @@
 #   key       the character printed on the UNSHIFTED US key: a-z 0-9 ` - = [ ] \ ; ' , . /
 #   layer     normal | shift | link | link-shift   (link = after the linker key 'g')
 #   kind      consonant | final | link | vowel-sign | vowel-sign-pre | independent-vowel |
-#             modifier | phala | digit | punct
-#   source    photo3    = Bijoy keyboard chart, 3rd edition (image supplied by the user,
-#                         2026-10-06), read from the key cap
+#             modifier | phala | reph | digit | punct
+#   source    chart     = Bijoy keyboard chart, 3rd edition ("বিজয় বাংলা কীবোর্ড, তৃতীয়
+#                         সংস্করণ"; images supplied by the user 2026-10-06), read from the key cap
 #             user-list = conjunct key sequences supplied by the user
 #             memory    = engineer's recollection; NOT confirmed. Rejected by --strict
 #                         (release) until confirmed against a reference.
@@ -19,87 +19,91 @@
 # (Phase 3), not a layout decision.
 
 # --- Top letter row -----------------------------------------------------------------
-q  normal  consonant          photo3  U+0999   # ঙ
-q  shift   modifier           photo3  U+0982   # ং
-w  normal  consonant          photo3  U+09AF   # য
-w  shift   consonant          photo3  U+09DF   # য়
-e  normal  consonant          photo3  U+09A1   # ড
-e  shift   consonant          photo3  U+09A2   # ঢ
-r  normal  consonant          photo3  U+09AA   # প
-r  shift   consonant          photo3  U+09AB   # ফ
-t  normal  consonant          photo3  U+099F   # ট
-t  shift   consonant          photo3  U+09A0   # ঠ
-y  normal  consonant          photo3  U+099A   # চ
-y  shift   consonant          photo3  U+099B   # ছ
-u  normal  consonant          photo3  U+099C   # জ
-u  shift   consonant          photo3  U+099D   # ঝ
-i  normal  consonant          photo3  U+09B9   # হ
-i  shift   consonant          photo3  U+099E   # ঞ
-o  normal  consonant          photo3  U+0997   # গ
-o  shift   consonant          photo3  U+0998   # ঘ
-p  normal  consonant          photo3  U+09DC   # ড়
-p  shift   consonant          photo3  U+09DD   # ঢ়
+q  normal  consonant          chart  U+0999   # ঙ
+q  shift   modifier           chart  U+0982   # ং
+w  normal  consonant          chart  U+09AF   # য
+w  shift   consonant          chart  U+09DF   # য়
+e  normal  consonant          chart  U+09A1   # ড
+e  shift   consonant          chart  U+09A2   # ঢ
+r  normal  consonant          chart  U+09AA   # প
+r  shift   consonant          chart  U+09AB   # ফ
+t  normal  consonant          chart  U+099F   # ট
+t  shift   consonant          chart  U+09A0   # ঠ
+y  normal  consonant          chart  U+099A   # চ
+y  shift   consonant          chart  U+099B   # ছ
+u  normal  consonant          chart  U+099C   # জ
+u  shift   consonant          chart  U+099D   # ঝ
+i  normal  consonant          chart  U+09B9   # হ
+i  shift   consonant          chart  U+099E   # ঞ
+o  normal  consonant          chart  U+0997   # গ
+o  shift   consonant          chart  U+0998   # ঘ
+p  normal  consonant          chart  U+09DC   # ড়
+p  shift   consonant          chart  U+09DD   # ঢ়
 
 # --- Home row -----------------------------------------------------------------------
-a  normal      vowel-sign         photo3  U+09C3   # ৃ
-a  link        independent-vowel  photo3  U+098B   # ঋ
-s  normal      vowel-sign         photo3  U+09C1   # ু
-s  shift       vowel-sign         photo3  U+09C2   # ূ
-s  link        independent-vowel  photo3  U+0989   # উ
-s  link-shift  independent-vowel  photo3  U+098A   # ঊ
-d  normal      vowel-sign-pre     photo3  U+09BF   # ি
-d  shift       vowel-sign         photo3  U+09C0   # ী
-d  link        independent-vowel  photo3  U+0987   # ই
-d  link-shift  independent-vowel  photo3  U+0988   # ঈ
-f  normal      vowel-sign         photo3  U+09BE   # া
-f  shift       independent-vowel  photo3  U+0985   # অ
-f  link        independent-vowel  photo3  U+0986   # আ
-g  normal      link               photo3  U+09CD   # ্ (linker / hasant)
-g  shift       punct              memory  U+0964   # । (dari)
-h  normal      consonant          photo3  U+09AC   # ব
-h  shift       consonant          photo3  U+09AD   # ভ
-j  normal      consonant          photo3  U+0995   # ক
-j  shift       consonant          photo3  U+0996   # খ
-k  normal      consonant          photo3  U+09A4   # ত
-k  shift       consonant          photo3  U+09A5   # থ
-l  normal      consonant          photo3  U+09A6   # দ
-l  shift       consonant          photo3  U+09A7   # ধ
-\  normal      final              photo3  U+09CE   # ৎ
-\  shift       modifier           photo3  U+0983   # ঃ
+a  normal      vowel-sign         chart  U+09C3   # ৃ
+a  shift       reph               chart  U+09B0 U+09CD   # র্ (reph mark on the chart)
+a  link        independent-vowel  chart  U+098B   # ঋ
+s  normal      vowel-sign         chart  U+09C1   # ু
+s  shift       vowel-sign         chart  U+09C2   # ূ
+s  link        independent-vowel  chart  U+0989   # উ
+s  link-shift  independent-vowel  chart  U+098A   # ঊ
+d  normal      vowel-sign-pre     chart  U+09BF   # ি
+d  shift       vowel-sign         chart  U+09C0   # ী
+d  link        independent-vowel  chart  U+0987   # ই
+d  link-shift  independent-vowel  chart  U+0988   # ঈ
+f  normal      vowel-sign         chart  U+09BE   # া
+f  shift       independent-vowel  chart  U+0985   # অ
+f  link        independent-vowel  chart  U+0986   # আ
+g  normal      link               chart  U+09CD   # ্ (linker / hasant)
+g  shift       punct              chart  U+0964   # । (dari)
+g  link        punct              chart  U+0965   # ॥ (double dari)
+h  normal      consonant          chart  U+09AC   # ব
+h  shift       consonant          chart  U+09AD   # ভ
+j  normal      consonant          chart  U+0995   # ক
+j  shift       consonant          chart  U+0996   # খ
+k  normal      consonant          chart  U+09A4   # ত
+k  shift       consonant          chart  U+09A5   # থ
+l  normal      consonant          chart  U+09A6   # দ
+l  shift       consonant          chart  U+09A7   # ধ
+# The chart prints ৎ / ঃ on the key left of Enter without a Latin label; mapped to the
+# US backslash key (to confirm with a Bijoy typist: backslash or apostrophe key?).
+\  normal      final              chart  U+09CE   # ৎ
+\  shift       modifier           chart  U+0983   # ঃ
 
 # --- Bottom letter row --------------------------------------------------------------
-z  normal      phala              photo3  U+09CD U+09B0   # ্র (ra-phala)
-z  shift       phala              photo3  U+09CD U+09AF   # ্য (ya-phala)
-x  normal      independent-vowel  memory  U+0993   # ও
-x  shift       vowel-sign         memory  U+09D7   # ৗ (au length mark; ে + ৗ = ৌ)
-x  link-shift  independent-vowel  memory  U+0994   # ঔ
-c  normal      vowel-sign-pre     photo3  U+09C7   # ে
-c  shift       vowel-sign-pre     photo3  U+09C8   # ৈ
-c  link        independent-vowel  photo3  U+098F   # এ
-c  link-shift  independent-vowel  photo3  U+0990   # ঐ
-v  normal      consonant          photo3  U+09B0   # র
-v  shift       consonant          photo3  U+09B2   # ল
-b  normal      consonant          photo3  U+09A8   # ন
-b  shift       consonant          photo3  U+09A3   # ণ
-n  normal      consonant          photo3  U+09B8   # স
-n  shift       consonant          photo3  U+09B7   # ষ
-m  normal      consonant          photo3  U+09AE   # ম
-m  shift       consonant          photo3  U+09B6   # শ
+z  normal      phala              chart  U+09CD U+09B0   # ্র (ra-phala)
+z  shift       phala              chart  U+09CD U+09AF   # ্য (ya-phala)
+x  normal      independent-vowel  chart  U+0993   # ও
+x  shift       vowel-sign         chart  U+09D7   # ৗ (au length mark; ে + ৗ = ৌ)
+x  link        independent-vowel  chart  U+0994   # ঔ
+c  normal      vowel-sign-pre     chart  U+09C7   # ে
+c  shift       vowel-sign-pre     chart  U+09C8   # ৈ
+c  link        independent-vowel  chart  U+098F   # এ
+c  link-shift  independent-vowel  chart  U+0990   # ঐ
+v  normal      consonant          chart  U+09B0   # র
+v  shift       consonant          chart  U+09B2   # ল
+b  normal      consonant          chart  U+09A8   # ন
+b  shift       consonant          chart  U+09A3   # ণ
+n  normal      consonant          chart  U+09B8   # স
+n  shift       consonant          chart  U+09B7   # ষ
+m  normal      consonant          chart  U+09AE   # ম
+m  shift       consonant          chart  U+09B6   # শ
 
 # --- Number row ---------------------------------------------------------------------
-1  normal  digit     photo3  U+09E7   # ১
-2  normal  digit     photo3  U+09E8   # ২
-3  normal  digit     photo3  U+09E9   # ৩
-4  normal  digit     photo3  U+09EA   # ৪
-5  normal  digit     photo3  U+09EB   # ৫
-6  normal  digit     photo3  U+09EC   # ৬
-7  normal  digit     photo3  U+09ED   # ৭
-8  normal  digit     photo3  U+09EE   # ৮
-9  normal  digit     photo3  U+09EF   # ৯
-0  normal  digit     photo3  U+09E6   # ০
-4  shift   punct     memory  U+09F3   # ৳
-7  shift   modifier  memory  U+0981   # ঁ
+1  normal  digit     chart  U+09E7   # ১
+2  normal  digit     chart  U+09E8   # ২
+3  normal  digit     chart  U+09E9   # ৩
+4  normal  digit     chart  U+09EA   # ৪
+5  normal  digit     chart  U+09EB   # ৫
+6  normal  digit     chart  U+09EC   # ৬
+7  normal  digit     chart  U+09ED   # ৭
+8  normal  digit     chart  U+09EE   # ৮
+9  normal  digit     chart  U+09EF   # ৯
+0  normal  digit     chart  U+09E6   # ০
+4  shift   punct     chart  U+09F3   # ৳
+7  shift   modifier  chart  U+0981   # ঁ
 
-# Not mapped yet (unreadable on photo3, to confirm): Shift+A, link layer of x,
-# shifted number-row symbols other than the above, ` ~ , < . > keys.
+# Not mapped yet: link layers of the number row and of ; , . (rare signs drawn in the
+# legacy font, not reliably identifiable), Shift+6, and the ` ~ key.
 # Unmapped keys pass through to the application unchanged.
