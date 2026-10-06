@@ -1,0 +1,36 @@
+{
+  "version": 6,
+  "cmakeMinimumRequired": { "major": 3, "minor": 25, "patch": 0 },
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "generator": "Visual Studio 18 2026",
+      "binaryDir": "${sourceDir}/build/${presetName}"
+    },
+    {
+      "name": "x64",
+      "displayName": "x64 (TIP, companion, tests, benchmark)",
+      "inherits": "base",
+      "architecture": { "value": "x64", "strategy": "set" }
+    },
+    {
+      "name": "x86",
+      "displayName": "x86 (TIP + engine tests only)",
+      "inherits": "base",
+      "architecture": { "value": "Win32", "strategy": "set" },
+      "cacheVariables": { "BUILD_BENCHMARKS": "OFF", "BUILD_COMPANION": "OFF" }
+    }
+  ],
+  "buildPresets": [
+    { "name": "x64-debug",          "configurePreset": "x64", "configuration": "Debug" },
+    { "name": "x64-relwithdebinfo", "configurePreset": "x64", "configuration": "RelWithDebInfo" },
+    { "name": "x64-release",        "configurePreset": "x64", "configuration": "Release" },
+    { "name": "x86-release",        "configurePreset": "x86", "configuration": "Release" }
+  ],
+  "testPresets": [
+    { "name": "x64-debug",   "configurePreset": "x64", "configuration": "Debug",   "output": { "outputOnFailure": true } },
+    { "name": "x64-release", "configurePreset": "x64", "configuration": "Release", "output": { "outputOnFailure": true } },
+    { "name": "x86-release", "configurePreset": "x86", "configuration": "Release", "output": { "outputOnFailure": true } }
+  ]
+}

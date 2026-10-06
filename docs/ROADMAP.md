@@ -4,7 +4,7 @@
 
 | Layer | What | How |
 |---|---|---|
-| Unit | Token table, FSM transitions, rule trie, backends, `calculateEditDelta`, ring buffer | doctest (vendored), runs in < 1 s |
+| Unit | Token table, FSM transitions, rule trie, backends, `calculateEditDelta`, ring buffer | In-repo minimal test harness (`tests/JulyTest.h`, no third-party code), runs in < 1 s |
 | Golden vectors | Every key, every consonant/vowel/vowel sign/digit/punctuation, every linker sequence, every Classic conjunct | `tests/golden/*.tsv`: `keys<TAB>expected Unicode code points<TAB>expected Classic code units`, compared by exact code point, never visually |
 | Layout validation | Generator rejects duplicate keys, unknown tokens, unreachable rules, and unverified Classic rows in release mode | `layoutgen --validate` in CI |
 | Unicode | NFC/NFD consistency of every emitted syllable, ZWJ/ZWNJ cases, no surrogate splitting, mixed English/Bangla, emoji adjacency (engine never edits outside its composition) | unit + Windows `NormalizeString` cross-check |

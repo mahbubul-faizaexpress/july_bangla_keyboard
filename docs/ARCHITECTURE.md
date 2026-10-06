@@ -446,7 +446,7 @@ src/common/         Settings (HKCU), Diagnostics (TraceLogging), Version, Guids
 tools/layoutgen/    C++ generator: *.layout -> generated tables (+ validation)
 tools/register/     JulyRegister.exe
 tools/diag/         Diagnostic test app (local-only display)
-tests/              unit/  golden/  fuzz/  integration/   (doctest, vendored)
+tests/              unit/  golden/  fuzz/  integration/   (in-repo minimal harness)
 bench/              keyboard_benchmark.exe
 installer/          WiX project
 resources/          icons, manifests, version.rc

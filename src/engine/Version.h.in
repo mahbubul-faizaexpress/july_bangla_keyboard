@@ -1,0 +1,9 @@
+#pragma once
+
+namespace july {
+
+inline constexpr char kAppVersion[]    = "@PROJECT_VERSION@";
+inline constexpr char kEngineVersion[] = "@JULY_ENGINE_VERSION@";
+inline constexpr char kLayoutVersion[] = "@JULY_LAYOUT_VERSION@";
+
+} // namespace july
