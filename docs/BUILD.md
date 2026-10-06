@@ -33,7 +33,7 @@ Output goes to `build/<preset>/`.
 |---|---|---|
 | `BUILD_TESTS` | ON | Unit tests (`july_unit_tests`) |
 | `BUILD_BENCHMARKS` | ON (x64) | `keyboard_benchmark.exe` |
-| `BUILD_LAYOUT_GENERATOR` | ON | Layout table generator (Phase 2) |
+| `STRICT_LAYOUT` | OFF | Fail the build if any layout row is unconfirmed (`source=memory`). **Required for release builds.** |
 | `BUILD_COMPANION` | ON (x64) | Tray/status companion `JulyBangla.exe` |
 | `ENABLE_DIAGNOSTICS` | OFF | Privacy-safe diagnostic instrumentation |
 | `JULY_SPECTRE` | OFF | Adds `/Qspectre`. It needs the VS component "MSVC Spectre-mitigated libs" (`Microsoft.VisualStudio.Component.VC.Runtimes.x86.x64.Spectre`) and is **required for release builds**. |

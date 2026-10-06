@@ -1,0 +1,2 @@
+add_executable(july_layoutgen LayoutGen.cpp)
+july_set_target_options(july_layoutgen)

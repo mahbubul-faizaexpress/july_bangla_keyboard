@@ -11,14 +11,14 @@ endif()
 
 option(BUILD_TESTS            "Build unit tests"                   ON)
 option(BUILD_BENCHMARKS       "Build keyboard_benchmark"           ON)
-option(BUILD_LAYOUT_GENERATOR "Build the layout generator tool"    ON)
-option(BUILD_COMPANION        "Build the tray/status companion"    ON)
+option(STRICT_LAYOUT          "Reject unconfirmed layout rows (release)" OFF)
+option(BUILD_COMPANION       "Build the tray/status companion"    ON)
 option(ENABLE_DIAGNOSTICS     "Compile diagnostic instrumentation" OFF)
 option(JULY_SPECTRE           "Compile with /Qspectre (needs Spectre-mitigated libs)" OFF)
 
 # Independent version tracks (spec §48).
 set(JULY_ENGINE_VERSION "0.1.0")
-set(JULY_LAYOUT_VERSION "0.0.0")
+set(JULY_LAYOUT_VERSION "0.1.0")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -35,6 +35,7 @@ if(CMAKE_SIZEOF_VOID_P EQUAL 4)
     set(JULY_ARCH_X86 ON)
 endif()
 
+add_subdirectory(tools/layoutgen)  # always built: the engine's tables are generated
 add_subdirectory(src/engine)
 add_subdirectory(src/tip)
 

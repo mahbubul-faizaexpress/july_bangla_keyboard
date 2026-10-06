@@ -1,0 +1,23 @@
+# Golden conjunct key sequences (supplied by the user, 2026-10-06; cross-checked against
+# the Bijoy 3rd-edition chart).
+# Columns: keys<TAB>expected<TAB>note
+#   keys: space-separated US key labels; an uppercase letter means Shift + that key.
+#   expected: exact text (UTF-8). Compared by code point, never visually.
+# Phase 2 checks that the per-key tokens concatenate to `expected`. Phase 3 re-runs the
+# same file through the composer.
+j g N	ক্ষ	1
+j g k	ক্ত	2
+u g I	জ্ঞ	3
+q g j	ঙ্ক	4
+q g o	ঙ্গ	5
+y g Y	চ্ছ	6
+I g u	ঞ্জ	7
+I g y	ঞ্চ	8
+k g k	ত্ত	9
+l g L	দ্ধ	10
+i g b	হ্ন	11
+i g m	হ্ম	12
+j g n	ক্স	13
+j g V	ক্ল	14
+j g N g m	ক্ষ্ম	15
+v g j	র্ক	reph
