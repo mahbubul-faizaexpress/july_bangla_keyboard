@@ -56,3 +56,11 @@ add_test(NAME classicgen_strict_rejects_converter_row
     COMMAND july_classicgen "${CLASSICGEN_CASES}/strict_converter.classic" "${CLASSICGEN_OUT}" --strict)
 set_tests_properties(classicgen_strict_rejects_converter_row PROPERTIES
     PASS_REGULAR_EXPRESSION "rejected in --strict mode")
+
+# End-to-end smoke test through real TSF. Needs the text service registered
+# (tools/dev/Register-Dev.ps1), so it is built but not part of the default ctest run.
+if(NOT JULY_ARCH_X86)
+    add_executable(july_tip_smoke integration/TipSmoke.cpp)
+    target_link_libraries(july_tip_smoke PRIVATE ole32 oleaut32 user32)
+    july_set_target_options(july_tip_smoke)
+endif()
