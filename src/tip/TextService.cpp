@@ -164,13 +164,39 @@ STDMETHODIMP TextService::ActivateEx(ITfThreadMgr* threadMgr, TfClientId clientI
     }
     mode_ = mode;
     composer_ = Composer(optionsFor(mode_));
+
+    // Mode button in Windows' own input indicator (next to the clock).
+    ComPtr<ITfLangBarItemMgr> langBar;
+    if (SUCCEEDED(threadMgr_.As(&langBar))) {
+        langBarButton_ = new (std::nothrow) LangBarButton(&TextService::onLangBarClick, this);
+        if (langBarButton_ != nullptr) {
+            langBarButton_->setMode(mode_);
+            if (FAILED(langBar->AddItem(langBarButton_))) {
+                langBarButton_->Release();
+                langBarButton_ = nullptr;
+            }
+        }
+    }
     return S_OK;
+}
+
+void TextService::onLangBarClick(void* self) noexcept {
+    auto* service = static_cast<TextService*>(self);
+    service->writeModeCompartment(nextMode(service->mode_));
 }
 
 STDMETHODIMP TextService::Deactivate() {
     commitComposition();
     composition_.Reset();
     composer_.reset();
+
+    if (langBarButton_ != nullptr) {
+        ComPtr<ITfLangBarItemMgr> langBar;
+        if (threadMgr_ && SUCCEEDED(threadMgr_.As(&langBar))) langBar->RemoveItem(langBarButton_);
+        langBarButton_->detach();
+        langBarButton_->Release();
+        langBarButton_ = nullptr;
+    }
 
     if (modeCompartment_ && compartmentSinkCookie_ != TF_INVALID_COOKIE) {
         ComPtr<ITfSource> source;
@@ -337,6 +363,7 @@ void TextService::setMode(InputMode mode) noexcept {
     commitComposition();
     mode_ = mode;
     composer_ = Composer(optionsFor(mode_));
+    if (langBarButton_ != nullptr) langBarButton_->setMode(mode_);
 }
 
 // --- Writing text ----------------------------------------------------------------------

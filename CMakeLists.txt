@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
 
 project(JulyBanglaKeyboard
-    VERSION 0.1.0
+    VERSION 0.2.0
     DESCRIPTION "Native Windows Bangla input method (TSF)"
     LANGUAGES CXX)
 
@@ -27,6 +27,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Static CRT everywhere: the TIP is loaded into arbitrary host processes and must not
 # depend on a VC++ redistributable being present.
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+configure_file(cmake/JulyVersionRc.h.in "${PROJECT_BINARY_DIR}/generated/JulyVersionRc.h" @ONLY)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 include(JulyCompilerOptions)

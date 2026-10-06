@@ -1,6 +1,6 @@
 #include "ModeVisuals.h"
 
-namespace july::app {
+namespace july {
 
 namespace {
 
@@ -101,4 +101,4 @@ HICON createModeIcon(InputMode mode, UINT dpi) noexcept {
     return icon;
 }
 
-} // namespace july::app
+} // namespace july

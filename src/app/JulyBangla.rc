@@ -1,0 +1,4 @@
+#define JULY_FILE_DESCRIPTION  "July Bangla Keyboard (status bar and tray)"
+#define JULY_ORIGINAL_FILENAME "JulyBangla.exe"
+#define JULY_FILE_TYPE         VFT_APP
+#include "../../cmake/VersionInfo.rc.inc"

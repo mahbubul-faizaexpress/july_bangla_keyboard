@@ -1,0 +1,4 @@
+#define JULY_FILE_DESCRIPTION  "July Bangla Keyboard text service (TSF)"
+#define JULY_ORIGINAL_FILENAME "JulyTip.dll"
+#define JULY_FILE_TYPE         VFT_DLL
+#include "../../cmake/VersionInfo.rc.inc"

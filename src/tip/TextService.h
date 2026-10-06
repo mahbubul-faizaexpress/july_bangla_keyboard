@@ -6,6 +6,7 @@
 
 #include <atomic>
 
+#include "LangBarButton.h"
 #include "Module.h"
 #include "july/engine/Composer.h"
 #include "july/engine/InputMode.h"
@@ -66,6 +67,7 @@ private:
     HRESULT apply(ITfContext* context, const EditResult& result) noexcept;
     void commitComposition() noexcept;
     void setMode(InputMode mode) noexcept;
+    static void onLangBarClick(void* self) noexcept;
     bool readModeCompartment(InputMode& mode) const noexcept;  // false if no mode is set yet
     HRESULT writeModeCompartment(InputMode mode) noexcept;
 
@@ -83,6 +85,7 @@ private:
     Microsoft::WRL::ComPtr<ITfComposition> composition_;  // our open composition, if any
     InputMode mode_ = InputMode::English;
     Composer composer_;
+    LangBarButton* langBarButton_ = nullptr;  // owned reference; released in Deactivate
 };
 
 } // namespace july::tip

@@ -11,6 +11,7 @@
 //   july_tip_smoke.exe        exit 0 = all cases passed
 
 #include <windows.h>
+#include <ctffunc.h>
 #include <msctf.h>
 #include <richedit.h>
 #include <wrl/client.h>
@@ -247,11 +248,46 @@ int wmain(int argc, wchar_t** argv) {
         }
     }
 
+    // The input-mode button in Windows' input indicator must exist and follow the mode.
+    {
+        ComPtr<ITfLangBarItemMgr> langBar;
+        ComPtr<ITfLangBarItemButton> button;
+        if (SUCCEEDED(threadMgr.As(&langBar))) {
+            ComPtr<IEnumTfLangBarItems> items;
+            if (SUCCEEDED(langBar->EnumItems(&items))) {
+                ComPtr<ITfLangBarItem> item;
+                ULONG fetched = 0;
+                while (!button && items->Next(1, &item, &fetched) == S_OK && fetched == 1) {
+                    TF_LANGBARITEMINFO info{};
+                    if (SUCCEEDED(item->GetInfo(&info)) && info.clsidService == kClsidTextService &&
+                        info.guidItem == GUID_LBI_INPUTMODE) {
+                        item.As(&button);
+                    }
+                    item.Reset();
+                }
+            }
+        }
+        struct LabelCase { LONG mode; const wchar_t* label; };
+        const LabelCase labels[] = {{kModeEnglish, L"EN"},
+                                    {kModeUnicode, L"বাংলা"},
+                                    {kModeClassic, L"বিজয়"}};
+        for (const LabelCase& l : labels) {
+            setMode(threadMgr.Get(), clientId, l.mode);
+            BSTR text = nullptr;
+            const bool ok = button && SUCCEEDED(button->GetText(&text)) && text != nullptr && std::wstring_view(text) == l.label;
+            std::printf("%s  input-indicator button shows mode %ld %-17s got [%s]\n", ok ? "PASS" : "FAIL", l.mode, "",
+                        text ? hex(text).c_str() : (button ? "(no text)" : "(button not found)"));
+            if (text) SysFreeString(text);
+            failures += ok ? 0 : 1;
+        }
+    }
+
     // Leave the shared mode as we found it.
     setMode(threadMgr.Get(), clientId, originalMode < 0 ? kModeEnglish : originalMode);
     threadMgr->Deactivate();
     DestroyWindow(frame);
     CoUninitialize();
-    std::printf("%d case(s), %d failure(s)\n", static_cast<int>(std::size(kCases)), failures);
+    std::printf("%d typing case(s) + 3 indicator checks, %d failure(s)\n", static_cast<int>(std::size(kCases)),
+                failures);
     return failures == 0 ? 0 : 1;
 }

@@ -4,7 +4,7 @@
 
 #include "july/engine/InputMode.h"
 
-namespace july::app {
+namespace july {
 
 struct ModeVisual {
     const wchar_t* label;      // status bar text
@@ -21,4 +21,4 @@ struct ModeVisual {
 // UI font: Nirmala UI (ships with Windows, covers Bangla), `pixelHeight` tall.
 [[nodiscard]] HFONT createUiFont(int pixelHeight, int weight) noexcept;
 
-} // namespace july::app
+} // namespace july
