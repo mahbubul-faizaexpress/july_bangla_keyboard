@@ -38,10 +38,9 @@ Secondary Bijoy charts (also supplied by the user on 2026-10-06):
 - the official "বিজয় বাংলা কীবোর্ড, তৃতীয় সংস্করণ" chart
 - a Unicode Bijoy chart that shows the link forms separately
 
-There are 80 rows: 79 are verified on the master. The only exception is ॥ =
-`g` + Shift+`g`, which appears on both secondary charts but not on the master. A unit test
-fails if any other non-master row is added, so a mapping from another layout cannot slip
-in unnoticed.
+All 79 rows are verified on the master. ॥ (`g` + Shift+`g`), which appeared only on
+the secondary charts, was removed at the user's direction. A unit test fails if any
+non-master row is added, so a mapping from another layout cannot slip in unnoticed.
 
 Cases the master settles:
 

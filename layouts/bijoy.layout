@@ -62,7 +62,6 @@ f  shift       independent-vowel  master  U+0985   # অ
 f  link        independent-vowel  master  U+0986   # আ
 g  normal      link               master  U+09CD   # ্ (linker / hasant)
 g  shift       punct              master  U+0964   # । (dari)
-g  link-shift  punct              chart  U+0965   # ॥ (double dari)
 h  normal      consonant          master  U+09AC   # ব
 h  shift       consonant          master  U+09AD   # ভ
 j  normal      consonant          master  U+0995   # ক

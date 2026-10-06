@@ -61,7 +61,6 @@ constexpr Expect kExpected[] = {
     {0x21, KeyLayer::Link, TokenKind::IndependentVowel, u"আ"},   // আ
     {0x22, KeyLayer::Normal, TokenKind::Link, u"্"},             // ্
     {0x22, KeyLayer::Shift, TokenKind::Punct, u"।"},             // ।
-    {0x22, KeyLayer::LinkShift, TokenKind::Punct, u"॥"},    // ॥ (G + Shift+G)
     {0x23, KeyLayer::Normal, TokenKind::Consonant, u"ব"},        // ব
     {0x23, KeyLayer::Shift, TokenKind::Consonant, u"ভ"},         // ভ
     {0x24, KeyLayer::Normal, TokenKind::Consonant, u"ক"},        // ক
@@ -154,24 +153,16 @@ TEST_CASE("layout table has exactly the rows the hand-checked list expects, plus
     std::printf("  layout rows: %zu confirmed, %zu unconfirmed (source=memory)\n", confirmed, unconfirmed);
 }
 
-TEST_CASE("every row is on the master Bijoy chart, except the reviewed ॥ row") {
-    // The master chart is the reference; a row from anywhere else must be reviewed and
-    // listed here explicitly, so nothing from another layout slips in unnoticed.
+TEST_CASE("every row is on the master Bijoy chart") {
+    // The master chart is the reference; nothing from another chart or layout may slip in.
     std::size_t master = 0;
-    std::size_t other = 0;
     for (const july::LayoutEntry& e : july::bijoyLayoutEntries()) {
-        if (e.source == july::LayoutSource::Master) {
-            ++master;
-            continue;
-        }
-        ++other;
-        const bool isDoubleDari = e.scan == 0x22 && e.layer == KeyLayer::LinkShift &&
-                                  e.source == july::LayoutSource::Chart && e.token.text() == u"॥";
-        if (!isDoubleDari) std::fprintf(stderr, "  non-master row: scan 0x%02X layer %d\n", e.scan, static_cast<int>(e.layer));
-        CHECK(isDoubleDari);
+        const bool onMaster = e.source == july::LayoutSource::Master;
+        if (!onMaster) std::fprintf(stderr, "  non-master row: scan 0x%02X layer %d\n", e.scan, static_cast<int>(e.layer));
+        CHECK(onMaster);
+        master += onMaster ? 1 : 0;
     }
-    CHECK(other == 1);
-    std::printf("  layout rows: %zu on master chart, %zu from other Bijoy charts\n", master, other);
+    std::printf("  layout rows: %zu, all on the master chart\n", master);
 }
 
 TEST_CASE("digit keys produce Bengali digits") {
@@ -189,7 +180,8 @@ TEST_CASE("unmapped and out-of-range keys return a None token") {
     CHECK(july::lookupBijoyKey(0x39, KeyLayer::Normal).kind == TokenKind::None);  // space
     CHECK(july::lookupBijoyKey(0x24, KeyLayer::Link).kind == TokenKind::None);    // g then j: no link form
     CHECK(july::lookupBijoyKey(0x2D, KeyLayer::Link).kind == TokenKind::None);   // ঔ is G+Shift+X, not G+X
-    CHECK(july::lookupBijoyKey(0x22, KeyLayer::Link).kind == TokenKind::None);   // ॥ is G+Shift+G, not G+G
+    CHECK(july::lookupBijoyKey(0x22, KeyLayer::Link).kind == TokenKind::None);      // ॥ removed (not Bijoy)
+    CHECK(july::lookupBijoyKey(0x22, KeyLayer::LinkShift).kind == TokenKind::None);
     CHECK(july::lookupBijoyKey(0x80, KeyLayer::Normal).kind == TokenKind::None);
     CHECK(july::lookupBijoyKey(0xFFFF, KeyLayer::Shift).kind == TokenKind::None);
     CHECK(july::lookupBijoyKey(0x24, static_cast<KeyLayer>(9)).kind == TokenKind::None);
@@ -249,5 +241,5 @@ TEST_CASE("golden conjunct sequences produce the exact expected code points") {
 }
 
 TEST_CASE("golden linker-vowel sequences produce the exact expected code points") {
-    CHECK(runGoldenFile(JULY_GOLDEN_DIR "/bijoy_link_vowels.tsv") == 12);
+    CHECK(runGoldenFile(JULY_GOLDEN_DIR "/bijoy_link_vowels.tsv") == 11);
 }
