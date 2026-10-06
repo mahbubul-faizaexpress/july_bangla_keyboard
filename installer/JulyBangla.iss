@@ -62,7 +62,7 @@ Type: files; Name: "{app}\x64\JulyTip.dll.old-*"
 Type: files; Name: "{app}\x86\JulyTip.dll.old-*"
 
 [Registry]
-Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "JulyBanglaKeyboard"; ValueData: """{app}\JulyBangla.exe"""; Tasks: startup; Flags: uninsdeletevalue
+Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "JulyBanglaKeyboard"; ValueData: """{app}\JulyBangla.exe"" --autostart"; Tasks: startup; Flags: uninsdeletevalue
 ; Also remove the startup value if the user enabled it later from the tray menu.
 Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: none; ValueName: "JulyBanglaKeyboard"; Flags: uninsdeletevalue dontcreatekey
 ; Per-user settings (mode, status bar position); removed on uninstall.

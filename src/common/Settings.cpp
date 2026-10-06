@@ -53,8 +53,9 @@ bool setStartWithWindows(bool enable, const wchar_t* exePath) noexcept {
         const LSTATUS status = RegDeleteKeyValueW(HKEY_CURRENT_USER, kRunKey, kRunValue);
         return status == ERROR_SUCCESS || status == ERROR_FILE_NOT_FOUND;
     }
-    wchar_t command[MAX_PATH + 3] = {};
-    if (swprintf_s(command, L"\"%s\"", exePath) < 0) return false;
+    wchar_t command[MAX_PATH + 16] = {};
+    // --autostart: started at sign-in, so the companion skips the splash screen.
+    if (swprintf_s(command, L"\"%s\" --autostart", exePath) < 0) return false;
     const auto bytes = static_cast<DWORD>((wcslen(command) + 1) * sizeof(wchar_t));
     return RegSetKeyValueW(HKEY_CURRENT_USER, kRunKey, kRunValue, REG_SZ, command, bytes) == ERROR_SUCCESS;
 }

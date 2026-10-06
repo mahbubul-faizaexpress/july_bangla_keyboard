@@ -13,6 +13,7 @@
 #include "ModeSync.h"
 #include "ModeVisuals.h"
 #include "Settings.h"
+#include "Splash.h"
 #include "StatusBar.h"
 #include "TrayIcon.h"
 #include "july/engine/Version.h"
@@ -44,7 +45,7 @@ constexpr int kOpacityChoices[] = {100, 90, 75, 60};
 
 class App {
 public:
-    int run(HINSTANCE instance) noexcept;
+    int run(HINSTANCE instance, bool showSplash) noexcept;
 
 private:
     static LRESULT CALLBACK windowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
@@ -69,9 +70,10 @@ private:
     ModeSync modeSync_;
     TrayIcon tray_;
     StatusBar bar_;
+    Splash splash_;
 };
 
-int App::run(HINSTANCE instance) noexcept {
+int App::run(HINSTANCE instance, bool showSplash) noexcept {
     instance_ = instance;
     settings_ = loadSettings();
 
@@ -90,6 +92,7 @@ int App::run(HINSTANCE instance) noexcept {
     const InputMode mode = modeSync_.mode();
     tray_.add(hwnd_, mode);
     if (settings_.showStatusBar) setStatusBarVisible(true);
+    if (showSplash) splash_.show(instance_);
 
     MSG msg;
     while (GetMessageW(&msg, nullptr, 0, 0) > 0) {
@@ -98,6 +101,7 @@ int App::run(HINSTANCE instance) noexcept {
     }
 
     tray_.remove();
+    splash_.close();
     bar_.destroy();
     modeSync_.stop();
     return 0;
@@ -222,12 +226,14 @@ void App::showDiagnostics() noexcept {
 }
 
 void App::showAbout() noexcept {
-    wchar_t text[512];
+    wchar_t text[768];
     swprintf_s(text,
-               L"July Bangla Keyboard %hs\nEngine %hs, layout %hs (Bijoy)\n\n"
+               L"জুলাই বাংলা কীবোর্ড  (July Bangla Keyboard) %hs\n\n"
+               L"%s\n%s\n\n"
+               L"Engine %hs, layout %hs (Bijoy)\n"
                L"Ctrl+Alt+B: English → বাংলা → বিজয়\n\n"
                L"Privacy: works offline. No keystrokes, typed text or clipboard data are stored or sent.",
-               kAppVersion, kEngineVersion, kLayoutVersion);
+               kAppVersion, kSlogan, kDedication, kEngineVersion, kLayoutVersion);
     MessageBoxW(nullptr, text, L"July Bangla Keyboard", MB_OK | MB_ICONINFORMATION);
 }
 
@@ -256,7 +262,9 @@ LRESULT App::handle(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept 
             return 0;
         }
     case kShowBarMessage:
+        // The user opened the program again (e.g. from the Start menu).
         if (!settings_.showStatusBar) setStatusBarVisible(true);
+        splash_.show(instance_);
         return 0;
     case WM_DISPLAYCHANGE:
     case WM_SETTINGCHANGE:
@@ -274,7 +282,9 @@ LRESULT App::handle(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept 
 
 } // namespace july::app
 
-int WINAPI wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE, _In_ PWSTR, _In_ int) {
+int WINAPI wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE, _In_ PWSTR commandLine, _In_ int) {
+    // Started by Windows at sign-in: no splash (it would interrupt the user every day).
+    const bool autostart = commandLine != nullptr && wcsstr(commandLine, L"--autostart") != nullptr;
     HANDLE mutex = CreateMutexW(nullptr, TRUE, july::app::kMutexName);
     if (mutex == nullptr) return 1;
     if (GetLastError() == ERROR_ALREADY_EXISTS) {
@@ -289,7 +299,7 @@ int WINAPI wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE, _In_ PWSTR, _In
     int result = 1;
     if (SUCCEEDED(CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED))) {
         static july::app::App app;  // static: large members, single instance
-        result = app.run(instance);
+        result = app.run(instance, !autostart);
         CoUninitialize();
     }
     ReleaseMutex(mutex);

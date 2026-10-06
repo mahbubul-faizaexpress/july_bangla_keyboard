@@ -1,6 +1,7 @@
 add_executable(JulyBangla WIN32
     Main.cpp
     ModeSync.cpp
+    Splash.cpp
     StatusBar.cpp
     TrayIcon.cpp
     JulyBangla.rc
