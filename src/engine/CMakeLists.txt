@@ -14,11 +14,25 @@ add_custom_command(
     COMMAND_EXPAND_LISTS
     VERBATIM)
 
+set(JULY_CLASSIC_TABLE "${PROJECT_SOURCE_DIR}/layouts/sutonnymj.classic")
+set(JULY_CLASSIC_INC "${JULY_GENERATED_DIR}/july/engine/generated/ClassicTable.inc")
+
+add_custom_command(
+    OUTPUT "${JULY_CLASSIC_INC}"
+    COMMAND "${CMAKE_COMMAND}" -E make_directory "${JULY_GENERATED_DIR}/july/engine/generated"
+    COMMAND july_classicgen "${JULY_CLASSIC_TABLE}" "${JULY_CLASSIC_INC}" ${JULY_LAYOUTGEN_FLAGS}
+    DEPENDS july_classicgen "${JULY_CLASSIC_TABLE}"
+    COMMENT "Generating SutonnyMJ classic table"
+    COMMAND_EXPAND_LISTS
+    VERBATIM)
+
 add_library(july_engine STATIC
+    src/ClassicBackend.cpp
     src/Composer.cpp
     src/InputMode.cpp
     src/Layout.cpp
     src/UnicodeBackend.cpp
+    "${JULY_CLASSIC_INC}"
     "${JULY_BIJOY_INC}")
 
 target_include_directories(july_engine PUBLIC

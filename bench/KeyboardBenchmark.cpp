@@ -106,8 +106,12 @@ int main(int argc, char** argv) {
     report(out, "timer resolution: %.0f ns; latency = per-event average within %.0f-event batches\n\n",
            1e9 / static_cast<double>(frequency.QuadPart), static_cast<double>(kBatch));
 
+    for (const auto encoding : {july::OutputEncoding::Unicode, july::OutputEncoding::Classic}) {
+    const char* encodingName = encoding == july::OutputEncoding::Classic ? "Classic (SutonnyMJ)" : "Unicode";
+    std::printf("== %s output ==\n", encodingName);
+    if (out) std::fprintf(out, "== %s output ==\n", encodingName);
     for (const std::size_t total : {std::size_t{10'000}, std::size_t{100'000}, std::size_t{1'000'000}}) {
-        july::Composer composer;
+        july::Composer composer(july::ComposerOptions{july::NuktaForm::Precomposed, encoding});
         std::vector<double> batchNs;
         batchNs.reserve(total / kBatch + 1);
         std::size_t sink = 0;  // keeps results observable so the optimizer cannot drop work
@@ -157,6 +161,7 @@ int main(int argc, char** argv) {
             report(out, "  CPU: below GetProcessTimes resolution (~15.6 ms) for this run length\n");
         }
         report(out, "  (checksum %.0f)\n\n", static_cast<double>(sink));
+    }
     }
 
     PROCESS_MEMORY_COUNTERS_EX mem{};

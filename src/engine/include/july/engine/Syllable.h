@@ -26,12 +26,20 @@ using EngineText = TextBuffer<kTextCapacity>;
 // nukta U+09BC, which is their NFC form (the three are Unicode composition exclusions).
 enum class NuktaForm : std::uint8_t { Precomposed, Decomposed };
 
+// Output backend: the same typed syllable rendered as Unicode or as Bijoy Classic
+// (SutonnyMJ glyph codes, cp1252-compatible).
+enum class OutputEncoding : std::uint8_t { Unicode, Classic };
+
 struct ComposerOptions {
-    NuktaForm nukta = NuktaForm::Precomposed;
+    NuktaForm nukta = NuktaForm::Precomposed;  // Unicode output only
+    OutputEncoding encoding = OutputEncoding::Unicode;
 };
 
 // Renders a syllable's keys as logical-order Unicode (Unicode backend).
 void renderUnicode(std::span<const KeyToken> keys, const ComposerOptions& options,
                    EngineText& out) noexcept;
+
+// Renders a syllable's keys as SutonnyMJ glyph codes in visual order (Classic backend).
+void renderClassic(std::span<const KeyToken> keys, EngineText& out) noexcept;
 
 } // namespace july

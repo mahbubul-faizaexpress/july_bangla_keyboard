@@ -1,5 +1,6 @@
 add_executable(july_unit_tests
     TestMain.cpp
+    unit/ClassicTests.cpp
     unit/ComposerTests.cpp
     unit/InputModeTests.cpp
     unit/LayoutTests.cpp
@@ -8,7 +9,7 @@ add_executable(july_unit_tests
 target_include_directories(july_unit_tests PRIVATE .)
 target_compile_definitions(july_unit_tests PRIVATE
     JULY_GOLDEN_DIR="${CMAKE_CURRENT_SOURCE_DIR}/golden")
-target_link_libraries(july_unit_tests PRIVATE july_engine)
+target_link_libraries(july_unit_tests PRIVATE july_engine july_common)
 july_set_target_options(july_unit_tests)
 
 add_test(NAME july_unit_tests COMMAND july_unit_tests)
@@ -38,4 +39,20 @@ add_test(NAME layoutgen_accepts_memory_row_by_default
 add_test(NAME layoutgen_strict_rejects_memory_row
     COMMAND july_layoutgen "${LAYOUTGEN_CASES}/strict_memory.layout" "${LAYOUTGEN_OUT}" --strict)
 set_tests_properties(layoutgen_strict_rejects_memory_row PROPERTIES
+    PASS_REGULAR_EXPRESSION "rejected in --strict mode")
+
+# classicgen validation, same pattern as layoutgen.
+set(CLASSICGEN_CASES "${CMAKE_CURRENT_SOURCE_DIR}/classicgen")
+set(CLASSICGEN_OUT "${CMAKE_CURRENT_BINARY_DIR}/classicgen-out.inc")
+file(GLOB bad_classic CONFIGURE_DEPENDS "${CLASSICGEN_CASES}/bad_*.classic")
+foreach(table IN LISTS bad_classic)
+    get_filename_component(name "${table}" NAME_WE)
+    add_test(NAME classicgen_rejects_${name} COMMAND july_classicgen "${table}" "${CLASSICGEN_OUT}")
+    set_tests_properties(classicgen_rejects_${name} PROPERTIES PASS_REGULAR_EXPRESSION "\\): error: ")
+endforeach()
+add_test(NAME classicgen_accepts_good_minimal
+    COMMAND july_classicgen "${CLASSICGEN_CASES}/good_minimal.classic" "${CLASSICGEN_OUT}")
+add_test(NAME classicgen_strict_rejects_converter_row
+    COMMAND july_classicgen "${CLASSICGEN_CASES}/strict_converter.classic" "${CLASSICGEN_OUT}" --strict)
+set_tests_properties(classicgen_strict_rejects_converter_row PROPERTIES
     PASS_REGULAR_EXPRESSION "rejected in --strict mode")

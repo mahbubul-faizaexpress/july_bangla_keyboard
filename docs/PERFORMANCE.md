@@ -44,6 +44,24 @@ to give the run-to-run spread.
 batch averages (up to ~0.77 µs) come from OS scheduling noise and are still four orders of
 magnitude below a keystroke interval.
 
+## Classic (SutonnyMJ) output (Phase 4)
+
+Same benchmark and stream, with the Composer set to Classic output. Release x64,
+2026-10-06, single run.
+
+| Events | Mean (ns/event) | p50 | p95 | p99 | Max (batch avg) | Heap allocations |
+|---|---|---|---|---|---|---|
+| 10,000 | 159.7 | 159.0 | 168.8 | 171.1 | 186.3 | 0 |
+| 100,000 | 160.7 | 158.6 | 166.4 | 217.6 | 308.6 | 0 |
+| 1,000,000 | 168.4 | 164.5 | 185.5 | 292.6 | 509.0 | 0 |
+
+**CPU:** 1,000,000 events took 171.9 ms, which is 171.9 µs per 1,000 events.
+
+Classic is about 3× the Unicode cost, because each syllable is re-rendered with
+longest-match binary searches over the 222-row table. It is still about 0.17 µs per key,
+with no allocation. In the same run, Unicode output measured a mean of 55.0 – 56.4 ns per
+event.
+
 ## Robustness runs (not performance, recorded here for completeness)
 
 - `july_fuzz` ran 10,000,000 events × 2 in 1.42 s (Release) with all invariants holding and

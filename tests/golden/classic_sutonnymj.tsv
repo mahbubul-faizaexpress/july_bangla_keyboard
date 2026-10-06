@@ -1,0 +1,29 @@
+# Classic (SutonnyMJ) golden output: Bijoy keys -> exact glyph code units (cp1252-decoded,
+# written here as UTF-8). Compared by code unit.
+# Rows marked "known sample" are SutonnyMJ strings widely quoted for these words
+# (independent of the converter table); the others check reordering and longest-match.
+# Columns: keys<TAB>expected<TAB>note   (uppercase = Shift + key)
+g f d m	Avwg	আমি (known sample)
+h f Q V f W	evsjvq	বাংলায় (known sample)
+o f b	Mvb	গান (known sample)
+o f g d	MvB	গাই (known sample)
+j f c u	Kv‡R	কাজে (known sample)
+d j	wK	কি: i-kar glyph first
+c j f	‡Kv	কো: e-kar glyph first, aa-kar after
+c j X	‡KŠ	কৌ: e-kar glyph first, au-mark after
+j m A	Kg©	কর্ম: reph glyph after its consonant
+j f w A	Kvh©	কার্য
+h B A	eY©	বর্ণ
+j g N	¶	ক্ষ: single conjunct glyph
+j g N g m	²	ক্ষ্ম: longest match
+d j g N	w¶	ক্ষি
+r j g N	c¶	পক্ষ
+u g I f b	Ávb	জ্ঞান
+l g L	×	দ্ধ
+j z	µ	ক্র: ra-phala conjunct glyph
+h Z f	e¨v	ব্যা: ya-phala
+v Z	i¨	র‍্য
+o s	¸	গু: consonant + u-kar ligature
+v s	i“	রু
+i a	ü	হৃ
+j g	K&	ক্ with visible hasant

@@ -1,2 +1,5 @@
 add_executable(july_layoutgen LayoutGen.cpp)
 july_set_target_options(july_layoutgen)
+
+add_executable(july_classicgen ClassicGen.cpp)
+july_set_target_options(july_classicgen)

@@ -2,6 +2,7 @@
 
 #include <span>
 
+#include "july/engine/ClassicTable.h"
 #include "july/engine/Layout.h"
 
 namespace july {
@@ -80,7 +81,12 @@ void Composer::push(const Token& token, bool consumedLink) noexcept {
 }
 
 void Composer::render(EngineText& out) const noexcept {
-    renderUnicode(std::span(keys_.data(), count_), options_, out);
+    const std::span<const KeyToken> keys(keys_.data(), count_);
+    if (options_.encoding == OutputEncoding::Classic) {
+        renderClassic(keys, out);
+    } else {
+        renderUnicode(keys, options_, out);
+    }
 }
 
 void Composer::commitInto(EditResult& result) noexcept {
@@ -121,7 +127,11 @@ EditResult Composer::pressKey(std::uint16_t scan, bool shift) noexcept {
     case TokenKind::Final:
         // Never part of a syllable and never modified later: emit directly.
         commitInto(result);
-        result.commit.append(token.text());
+        if (options_.encoding == OutputEncoding::Classic) {
+            appendSutonny(token.text(), result.commit);
+        } else {
+            result.commit.append(token.text());
+        }
         break;
     default:
         if (!accepts(token)) commitInto(result);

@@ -37,6 +37,7 @@ endif()
 
 add_subdirectory(tools/layoutgen)  # always built: the engine's tables are generated
 add_subdirectory(src/engine)
+add_subdirectory(src/common)
 add_subdirectory(src/tip)
 
 # The companion, tests and benchmark are x64-only products; x86 builds only need the TIP.
