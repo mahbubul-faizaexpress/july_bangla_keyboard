@@ -147,9 +147,24 @@ int fail(const char* what, HRESULT hr) {
 
 } // namespace
 
-int wmain() {
+int wmain(int argc, wchar_t** argv) {
     HRESULT hr = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
     if (FAILED(hr)) return fail("CoInitializeEx", hr);
+
+    // july_tip_smoke --set-mode N: only write the shared mode (0 English, 1 Unicode,
+    // 2 Classic) from this process, to check that other processes are notified.
+    if (argc == 3 && std::wstring_view(argv[1]) == L"--set-mode") {
+        ComPtr<ITfThreadMgr> threadMgr;
+        hr = CoCreateInstance(CLSID_TF_ThreadMgr, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&threadMgr));
+        TfClientId clientId = TF_CLIENTID_NULL;
+        if (SUCCEEDED(hr)) hr = threadMgr->Activate(&clientId);
+        if (SUCCEEDED(hr)) hr = setMode(threadMgr.Get(), clientId, _wtoi(argv[2]));
+        if (FAILED(hr)) return fail("set mode", hr);
+        std::printf("mode set to %d\n", _wtoi(argv[2]));
+        threadMgr->Deactivate();
+        CoUninitialize();
+        return 0;
+    }
 
     if (LoadLibraryW(L"msftedit.dll") == nullptr) return fail("load msftedit.dll", HRESULT_FROM_WIN32(GetLastError()));
     HWND frame = CreateWindowExW(0, L"STATIC", L"july_tip_smoke", WS_OVERLAPPEDWINDOW, 100, 100, 600, 200, nullptr,

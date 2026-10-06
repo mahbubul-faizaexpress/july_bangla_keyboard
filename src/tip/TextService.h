@@ -66,7 +66,7 @@ private:
     HRESULT apply(ITfContext* context, const EditResult& result) noexcept;
     void commitComposition() noexcept;
     void setMode(InputMode mode) noexcept;
-    InputMode readModeCompartment() const noexcept;
+    bool readModeCompartment(InputMode& mode) const noexcept;  // false if no mode is set yet
     HRESULT writeModeCompartment(InputMode mode) noexcept;
 
     std::atomic<ULONG> refs_{1};

@@ -59,6 +59,19 @@ foreach ($t in $targets) {
     if ($p.ExitCode -ne 0) { $failed = $true }
 }
 
+$companionSource = "$repo\build\x64\src\app\Release\JulyBangla.exe"
+$companionDest = "$installDir\JulyBangla.exe"
+if ($Unregister) {
+    Get-Process JulyBangla -ErrorAction SilentlyContinue | Stop-Process -Force
+    Remove-ItemProperty -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run' -Name 'JulyBanglaKeyboard' -ErrorAction SilentlyContinue
+    Write-Log 'stopped the companion and removed its startup entry'
+} elseif (Test-Path $companionSource) {
+    Get-Process JulyBangla -ErrorAction SilentlyContinue | Stop-Process -Force
+    Start-Sleep -Milliseconds 300
+    Copy-Item -Path $companionSource -Destination $companionDest -Force
+    Write-Log "installed companion $companionDest"
+}
+
 if (-not $Unregister) {
     # Running programs keep the DLL version they loaded until they restart.
     $holders = Get-Process | Where-Object {

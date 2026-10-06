@@ -4,6 +4,7 @@
 #include <new>
 
 #include "Guids.h"
+#include "Settings.h"
 
 using Microsoft::WRL::ComPtr;
 
@@ -154,7 +155,14 @@ STDMETHODIMP TextService::ActivateEx(ITfThreadMgr* threadMgr, TfClientId clientI
                                           static_cast<ITfCompartmentEventSink*>(this), &compartmentSinkCookie_);
         }
     }
-    mode_ = readModeCompartment();
+    // First text service in this session: restore the user's last mode (cold path, once
+    // per activation). Sandboxed (AppContainer) apps cannot read it and start in English.
+    InputMode mode = InputMode::English;
+    if (!readModeCompartment(mode)) {
+        mode = loadSettings().mode;
+        if (modeCompartment_) writeModeCompartment(mode);
+    }
+    mode_ = mode;
     composer_ = Composer(optionsFor(mode_));
     return S_OK;
 }
@@ -296,14 +304,14 @@ STDMETHODIMP TextService::OnPreservedKey(ITfContext*, REFGUID guid, BOOL* eaten)
 
 // --- Mode ------------------------------------------------------------------------------
 
-InputMode TextService::readModeCompartment() const noexcept {
-    if (!modeCompartment_) return mode_;
+bool TextService::readModeCompartment(InputMode& mode) const noexcept {
+    if (!modeCompartment_) return false;
     VARIANT value;
     VariantInit(&value);
-    InputMode mode = InputMode::English;  // first use: English (spec)
-    if (SUCCEEDED(modeCompartment_->GetValue(&value)) && value.vt == VT_I4) mode = modeFromInt(value.lVal);
+    const bool set = SUCCEEDED(modeCompartment_->GetValue(&value)) && value.vt == VT_I4;
+    if (set) mode = modeFromInt(value.lVal);
     VariantClear(&value);
-    return mode;
+    return set;
 }
 
 HRESULT TextService::writeModeCompartment(InputMode mode) noexcept {
@@ -319,7 +327,8 @@ HRESULT TextService::writeModeCompartment(InputMode mode) noexcept {
 }
 
 STDMETHODIMP TextService::OnChange(REFGUID guid) {
-    if (guid == kGuidModeCompartment) setMode(readModeCompartment());
+    InputMode mode = mode_;
+    if (guid == kGuidModeCompartment && readModeCompartment(mode)) setMode(mode);
     return S_OK;
 }
 
