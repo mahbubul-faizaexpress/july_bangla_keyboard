@@ -1,0 +1,20 @@
+# Bijoy visual typing order (Phase 3 composer tests; not run in Phase 2, which has no
+# composer). Classic Bijoy emits glyphs in typing order, so legacy SutonnyMJ text shows
+# the order typists use. Evidence: the Bijoy->Unicode reordering logic in
+# github.com/Mad-FOX/bijoy2unicode (converter.py, reArrangeUnicodeConvertedText), and the
+# well-known SutonnyMJ sample "Avwg" = আমি (w = ি stored before g = ম).
+#   - pre-base kar (ি ে ৈ) is typed BEFORE the consonant cluster it belongs to
+#   - ো = ে + cluster + া ; ৌ = ে + cluster + ৗ
+#   - reph (Shift+A) is typed AFTER the cluster it sits on, and after a following
+#     post-base kar if there is one
+# Columns: keys<TAB>expected<TAB>note   (uppercase = Shift + key)
+d j	কি	i-kar first
+c j	কে	e-kar first
+C j	কৈ	oi-kar first
+c j f	কো	e-kar + cluster + aa-kar
+c j X	কৌ	e-kar + cluster + au length mark
+d j g N	ক্ষি	pre-kar before a conjunct
+g f d m	আমি	SutonnyMJ "Avwg"
+j m A	কর্ম	reph after its consonant
+h B A	বর্ণ	reph after its consonant
+j f w A	কার্য	reph after the following post-base kar

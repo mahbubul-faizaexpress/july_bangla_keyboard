@@ -45,6 +45,31 @@ The following are not mapped yet, so they pass through to the application unchan
   the charts disagree or are unreadable)
 - Shift+6
 
+## Typing order (visual order), for the Phase 3 composer
+
+Bijoy is typed in **visual order**:
+
+- **Pre-base vowel signs (ি ে ৈ) are typed before** the consonant cluster they belong to.
+  Examples: কি = `d j`, ক্ষি = `d j g N`.
+- ো = `c` + cluster + `f`, and ৌ = `c` + cluster + Shift+`x`.
+- **Reph (Shift+`a`) is typed after** the cluster it sits on. If a post-base vowel sign
+  follows the cluster, the reph comes after that sign too. Examples: কর্ম = `j m A`,
+  কার্য = `j f w A`.
+
+Evidence:
+
+- Classic Bijoy writes glyphs in the order they are typed, so legacy SutonnyMJ text records
+  the typing order. The well-known sample "Avwg" = আমি stores `w` (ি) before `g` (ম).
+- The Bijoy→Unicode reordering logic in
+  [Mad-FOX/bijoy2unicode](https://github.com/Mad-FOX/bijoy2unicode)
+  (`converter.py`, `reArrangeUnicodeConvertedText`) moves pre-base kars after the cluster,
+  joins ে + া/ৗ into ো/ৌ, and moves the reph glyph `©` from after the cluster (and after
+  one kar) to র্ before it.
+
+These cases are in `tests/golden/bijoy_typing_order.tsv`. They will run once the
+composer exists (Phase 3). Accepting logical-order input as well can be added later as a
+setting.
+
 ## Rules from the typing-rules table (c), for the Phase 3 composer
 
 - Shift selects the upper letter on a key. The linker `g` joins consonants, e.g.
