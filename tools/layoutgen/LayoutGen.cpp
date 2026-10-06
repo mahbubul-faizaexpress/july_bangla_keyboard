@@ -74,6 +74,7 @@ const std::map<std::string_view, std::string_view> kKinds = {
 };
 
 const std::map<std::string_view, std::string_view> kSources = {
+    {"master", "LayoutSource::Master"},
     {"chart", "LayoutSource::Chart"},
     {"user-list", "LayoutSource::UserList"},
     {"memory", "LayoutSource::Memory"},

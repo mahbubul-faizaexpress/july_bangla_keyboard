@@ -22,28 +22,39 @@ Every row carries a `source`:
 
 | source | meaning | release builds (`-DSTRICT_LAYOUT=ON`) |
 |---|---|---|
-| `chart` | read from the key caps; no reference chart contradicts it (see below) | allowed |
+| `master` | verified on the master Bijoy chart (see below) | allowed |
+| `chart` | not on the master, but on another Bijoy chart and contradicted by none | allowed |
 | `user-list` | from the user-supplied conjunct sequences | allowed |
 | `memory` | engineer's recollection, not yet confirmed | **rejected** |
 
-**Reference charts** (all supplied by the user on 2026-10-06):
+**This product follows the original Bijoy layout only.** No row comes from Avro or any
+other layout.
 
-- (a) the official "বিজয় বাংলা কীবোর্ড, তৃতীয় সংস্করণ" chart
-- (b) a Unicode Bijoy chart that shows the link forms separately
-- (c) the Marks PC Solution chart with its typing-rules table
+**Master reference:** the Marks PC Solution Bijoy chart with its typing-rules table. The
+user designated it the master on 2026-10-06. When charts disagree, the master wins.
 
-All 80 rows are confirmed. Chart (a) puts some link forms at mid-height on the key cap,
-which makes them easy to misread. Charts (b) and (c) settle those cases:
+Secondary Bijoy charts (also supplied by the user on 2026-10-06):
 
-- ঔ = `g` + Shift+`x`
-- ॥ = `g` + Shift+`g`
+- the official "বিজয় বাংলা কীবোর্ড, তৃতীয় সংস্করণ" chart
+- a Unicode Bijoy chart that shows the link forms separately
+
+There are 80 rows: 79 are verified on the master. The only exception is ॥ =
+`g` + Shift+`g`, which appears on both secondary charts but not on the master. A unit test
+fails if any other non-master row is added, so a mapping from another layout cannot slip
+in unnoticed.
+
+Cases the master settles:
+
+- ঔ = `g` + Shift+`x` (its rules table)
 - ৎ / ঃ are on the backslash key
+- Ctrl+Alt+B switches the keyboard, which matches this product's hotkey
 
-The following are not mapped yet, so they pass through to the application unchanged:
+Unmapped keys pass through to the application unchanged. On the master these keys are
+plain English, so they are intentionally left unmapped:
 
-- the link layers of the number row and of the `,` `.` keys (fractions, Assamese ৰ ৱ;
-  the charts disagree or are unreadable)
-- Shift+6
+- Shift+6 (^)
+- `,` `.` `/`
+- `;` `-` `=` `[` `]` and their shifted forms
 
 ## Typing order (visual order), for the Phase 3 composer
 

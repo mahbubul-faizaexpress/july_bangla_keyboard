@@ -21,7 +21,8 @@ inline constexpr std::size_t kScanCodeCount = 0x80;
 // Where a layout row's mapping came from. Release builds require every row to be
 // confirmed (anything except Memory).
 enum class LayoutSource : std::uint8_t {
-    Chart,     // Bijoy keyboard chart, 3rd edition (images supplied by the user)
+    Master,    // verified on the master Bijoy chart (Marks PC Solution chart + rules table)
+    Chart,     // only on another Bijoy chart (official 3rd edition / Unicode Bijoy chart)
     UserList,  // conjunct key sequences supplied by the user
     Memory,    // engineer's recollection, NOT yet confirmed against a reference
 };

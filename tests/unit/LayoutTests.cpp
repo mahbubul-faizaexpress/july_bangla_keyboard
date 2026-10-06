@@ -154,6 +154,26 @@ TEST_CASE("layout table has exactly the rows the hand-checked list expects, plus
     std::printf("  layout rows: %zu confirmed, %zu unconfirmed (source=memory)\n", confirmed, unconfirmed);
 }
 
+TEST_CASE("every row is on the master Bijoy chart, except the reviewed ॥ row") {
+    // The master chart is the reference; a row from anywhere else must be reviewed and
+    // listed here explicitly, so nothing from another layout slips in unnoticed.
+    std::size_t master = 0;
+    std::size_t other = 0;
+    for (const july::LayoutEntry& e : july::bijoyLayoutEntries()) {
+        if (e.source == july::LayoutSource::Master) {
+            ++master;
+            continue;
+        }
+        ++other;
+        const bool isDoubleDari = e.scan == 0x22 && e.layer == KeyLayer::LinkShift &&
+                                  e.source == july::LayoutSource::Chart && e.token.text() == u"॥";
+        if (!isDoubleDari) std::fprintf(stderr, "  non-master row: scan 0x%02X layer %d\n", e.scan, static_cast<int>(e.layer));
+        CHECK(isDoubleDari);
+    }
+    CHECK(other == 1);
+    std::printf("  layout rows: %zu on master chart, %zu from other Bijoy charts\n", master, other);
+}
+
 TEST_CASE("digit keys produce Bengali digits") {
     // 1..9 = scan 0x02..0x0A -> U+09E7..U+09EF; 0 = scan 0x0B -> U+09E6
     for (std::uint16_t i = 0; i < 9; ++i) {
