@@ -37,6 +37,26 @@ build/x64/bench/Release/keyboard_benchmark.exe report.txt   # engine latency/all
 build/x64/tests/Release/july_fuzz.exe <seed> <events>        # longer fuzz runs
 ```
 
+Installer: install the Inno Setup 6 compiler (`winget install JRSoftware.InnoSetup`, per
+user, no admin), then run:
+
+```
+powershell -ExecutionPolicy Bypass -File tools\Build-Installer.ps1            # -> build\installer\JulyBanglaKeyboard-<ver>-preview-Setup.exe
+powershell -ExecutionPolicy Bypass -File tools\Build-Installer.ps1 -Release   # strict: fails until the Classic table is verified
+```
+
+The script builds x64 and x86 Release, runs the tests, then compiles the installer.
+Setup installs per machine:
+
+- `Program Files\JulyBanglaKeyboard` with the `x64` and `x86` DLLs and the companion
+- both text services registered
+- the keyboard added to the user's keyboard list (optional task)
+- a Start menu shortcut
+- optional start with Windows
+
+Uninstall (Settings → Apps) reverses all of this. Files that running programs still have
+loaded are replaced or removed at the next restart.
+
 AddressSanitizer build (from Git Bash, `MSYS_NO_PATHCONV=1` stops `/fsanitize` being
 rewritten as a path):
 

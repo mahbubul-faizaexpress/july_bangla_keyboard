@@ -405,11 +405,19 @@ uninstall.
 
 ## 14. Installation and registration
 
-- **Installer: WiX Toolset (MSI).** TSF profile and COM registration have to happen in an
-  elevated, transactional context with **rollback**. MSI provides real rollback, clean
-  upgrades and enterprise deployability. Inno Setup and NSIS are lighter, but their
-  rollback of custom registration is manual. WiX is a build-time-only dependency; the end
-  user needs no runtime.
+- **Installer: Inno Setup 6** (`installer/JulyBangla.iss`, built by
+  `tools/Build-Installer.ps1`). This revises the Phase 0 choice of WiX/MSI. Reasons:
+  - It produces one familiar `Setup.exe`, the way Bijoy itself is distributed.
+  - Its `regserver` flag registers each DLL with the regsvr32 of matching bitness, and
+    unregisters it on uninstall.
+  - Its `restartreplace` flag handles text-service DLLs that running applications keep
+    loaded.
+  - It rolls back copied files if setup fails.
+  - The build needs no .NET SDK (WiX 4+ does).
+
+  Our own `DllRegisterServer` already rolls back a partial TSF registration, so MSI's
+  transactional custom actions would add little. An MSI can be added later for
+  enterprise deployment. The end user needs no runtime either way.
 - **Per-machine install is required.** TSF registers TIPs under `HKLM\SOFTWARE\Microsoft\CTF`,
   and AppContainer apps can only load DLLs from ACL-readable locations such as
   `Program Files`. This contradicts the spec's "prefer per-user install"; elevation is
