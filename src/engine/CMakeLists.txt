@@ -15,8 +15,10 @@ add_custom_command(
     VERBATIM)
 
 add_library(july_engine STATIC
+    src/Composer.cpp
     src/InputMode.cpp
     src/Layout.cpp
+    src/UnicodeBackend.cpp
     "${JULY_BIJOY_INC}")
 
 target_include_directories(july_engine PUBLIC

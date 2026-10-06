@@ -99,36 +99,6 @@ constexpr Expect kExpected[] = {
     {0x28, KeyLayer::Shift, TokenKind::Punct, u"”"},        // ”
 };
 
-// Scan codes for the conjunct golden file's key labels (restated independently).
-std::uint16_t scanForLetter(char lower) {
-    static constexpr char kRows[3][11] = {"qwertyuiop", "asdfghjkl", "zxcvbnm"};
-    static constexpr std::uint16_t kRowStart[3] = {0x10, 0x1E, 0x2C};
-    for (int row = 0; row < 3; ++row) {
-        const std::string_view keys = kRows[row];
-        if (const auto pos = keys.find(lower); pos != std::string_view::npos)
-            return static_cast<std::uint16_t>(kRowStart[row] + pos);
-    }
-    return 0;
-}
-
-std::u16string utf8ToUtf16(std::string_view s) {
-    std::u16string out;
-    for (std::size_t i = 0; i < s.size();) {
-        const auto b = static_cast<unsigned char>(s[i]);
-        char32_t cp = 0;
-        std::size_t len = 1;
-        if (b < 0x80) cp = b;
-        else if ((b >> 5) == 0x6) { cp = b & 0x1F; len = 2; }
-        else if ((b >> 4) == 0xE) { cp = b & 0x0F; len = 3; }
-        else return u"<invalid utf-8>";  // 4-byte sequences are not expected in this file
-        if (i + len > s.size()) return u"<truncated utf-8>";
-        for (std::size_t k = 1; k < len; ++k) cp = (cp << 6) | (static_cast<unsigned char>(s[i + k]) & 0x3F);
-        out.push_back(static_cast<char16_t>(cp));
-        i += len;
-    }
-    return out;
-}
-
 } // namespace
 
 TEST_CASE("every hand-checked Bijoy key maps to the expected token") {
@@ -185,61 +155,4 @@ TEST_CASE("unmapped and out-of-range keys return a None token") {
     CHECK(july::lookupBijoyKey(0x80, KeyLayer::Normal).kind == TokenKind::None);
     CHECK(july::lookupBijoyKey(0xFFFF, KeyLayer::Shift).kind == TokenKind::None);
     CHECK(july::lookupBijoyKey(0x24, static_cast<KeyLayer>(9)).kind == TokenKind::None);
-}
-
-namespace {
-
-// Phase 2 stand-in for the composer: concatenates key tokens, except that the linker 'g'
-// followed by a key with a link-layer form yields that form (e.g. g d -> ই).
-int runGoldenFile(const char* path) {
-    std::ifstream in(path, std::ios::binary);
-    CHECK(in.good());
-    int cases = 0;
-    for (std::string line; std::getline(in, line);) {
-        if (!line.empty() && line.back() == '\r') line.pop_back();
-        if (line.empty() || line[0] == '#') continue;
-        const auto tab1 = line.find('\t');
-        const auto tab2 = line.find('\t', tab1 + 1);
-        CHECK(tab1 != std::string::npos && tab2 != std::string::npos);
-        if (tab1 == std::string::npos || tab2 == std::string::npos) continue;
-
-        const std::string keys = line.substr(0, tab1);
-        const std::u16string expected = utf8ToUtf16(std::string_view(line).substr(tab1 + 1, tab2 - tab1 - 1));
-
-        std::u16string actual;
-        bool linkPending = false;
-        for (const char c : keys) {
-            if (c == ' ') continue;
-            const bool shift = c >= 'A' && c <= 'Z';
-            const char lower = shift ? static_cast<char>(c - 'A' + 'a') : c;
-            const std::uint16_t scan = scanForLetter(lower);
-            if (linkPending) {
-                const july::Token& linked = july::lookupBijoyKey(scan, shift ? KeyLayer::LinkShift : KeyLayer::Link);
-                linkPending = false;
-                if (linked.kind != TokenKind::None) {
-                    actual.pop_back();  // the linker's hasant is replaced by the linked form
-                    actual += linked.text();
-                    continue;
-                }
-            }
-            const july::Token& t = july::lookupBijoyKey(scan, shift ? KeyLayer::Shift : KeyLayer::Normal);
-            actual += t.text();
-            linkPending = t.kind == TokenKind::Link;
-        }
-        const bool ok = actual == expected;
-        if (!ok) std::fprintf(stderr, "  golden mismatch for keys '%s'\n", keys.c_str());
-        CHECK(ok);
-        ++cases;
-    }
-    return cases;
-}
-
-} // namespace
-
-TEST_CASE("golden conjunct sequences produce the exact expected code points") {
-    CHECK(runGoldenFile(JULY_GOLDEN_DIR "/bijoy_conjuncts.tsv") == 16);
-}
-
-TEST_CASE("golden linker-vowel sequences produce the exact expected code points") {
-    CHECK(runGoldenFile(JULY_GOLDEN_DIR "/bijoy_link_vowels.tsv") == 11);
 }

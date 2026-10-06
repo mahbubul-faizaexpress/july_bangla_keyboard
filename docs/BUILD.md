@@ -29,6 +29,24 @@ ctest --preset x86-release
 
 Output goes to `build/<preset>/`.
 
+`ctest` runs the unit tests, the layoutgen validation tests, and `july_fuzz` with three
+seeds (1,000,000 events each). Two other tools are run by hand:
+
+```
+build/x64/bench/Release/keyboard_benchmark.exe report.txt   # engine latency/allocations
+build/x64/tests/Release/july_fuzz.exe <seed> <events>        # longer fuzz runs
+```
+
+AddressSanitizer build (from Git Bash, `MSYS_NO_PATHCONV=1` stops `/fsanitize` being
+rewritten as a path):
+
+```
+MSYS_NO_PATHCONV=1 cmake -S . -B build/asan -G "Visual Studio 18 2026" -A x64 \
+    -DBUILD_COMPANION=OFF -DBUILD_BENCHMARKS=OFF "-DCMAKE_CXX_FLAGS=/fsanitize=address /EHsc"
+cmake --build build/asan --config Debug --target july_unit_tests july_fuzz
+# put the MSVC bin\Hostx64\x64 directory (clang_rt.asan_dynamic) on PATH, then run both
+```
+
 | Option | Default | Meaning |
 |---|---|---|
 | `BUILD_TESTS` | ON | Unit tests (`july_unit_tests`) |

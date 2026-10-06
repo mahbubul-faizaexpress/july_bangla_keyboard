@@ -1,5 +1,6 @@
 add_executable(july_unit_tests
     TestMain.cpp
+    unit/ComposerTests.cpp
     unit/InputModeTests.cpp
     unit/LayoutTests.cpp
     unit/RingBufferTests.cpp)
@@ -11,6 +12,13 @@ target_link_libraries(july_unit_tests PRIVATE july_engine)
 july_set_target_options(july_unit_tests)
 
 add_test(NAME july_unit_tests COMMAND july_unit_tests)
+
+add_executable(july_fuzz fuzz/ComposerFuzz.cpp)
+target_link_libraries(july_fuzz PRIVATE july_engine)
+july_set_target_options(july_fuzz)
+foreach(seed IN ITEMS 1 20261006 987654321)
+    add_test(NAME july_fuzz_seed_${seed} COMMAND july_fuzz ${seed} 1000000)
+endforeach()
 
 # layoutgen validation: every bad_*.layout must be rejected; good ones must pass.
 set(LAYOUTGEN_CASES "${CMAKE_CURRENT_SOURCE_DIR}/layoutgen")
