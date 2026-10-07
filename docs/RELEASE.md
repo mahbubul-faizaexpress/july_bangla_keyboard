@@ -22,7 +22,7 @@ A build is production-ready only when every gate is green. Status as of 0.3.0:
 | 3 | AddressSanitizer run of unit tests and fuzzer clean | ✅ (last run at 0.2.0, engine unchanged since) |
 | 4 | End-to-end TSF smoke test (`july_tip_smoke`) passes against the **installed** build | ✅ 18/18 on 0.3.0 (run by double-clicking `Keyboard-Test.cmd`) |
 | 5 | Every Bijoy layout row verified against the master chart | ✅ 79/79 |
-| 6 | Every SutonnyMJ Classic row verified in the font (`source=verified`) | ❌ 0/222 (font not available) |
+| 6 | Every SutonnyMJ Classic row verified in the font (`source=verified`) | ✅ 222/222 (2026-10-07; 15 rows corrected, see the table header) |
 | 7 | Manual compatibility checklist (docs/COMPATIBILITY.md) in Notepad, Word, Chrome, Edge, Firefox, WinUI | ⏳ partial |
 | 8 | Install → upgrade → uninstall → reinstall on a clean machine; no leftover CTF/CLSID keys | ⏳ install verified; uninstall not yet |
 | 9 | Binaries and installer Authenticode-signed and timestamped | ❌ no certificate yet |

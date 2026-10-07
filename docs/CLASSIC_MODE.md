@@ -46,12 +46,24 @@ has 222 rows: Unicode sequence → cp1252 bytes. At build time `tools/layoutgen/
 validates it (undefined cp1252 bytes, duplicates, lengths) and generates a sorted table.
 The backend does a greedy longest match, so ক্ষ্ম becomes `²` rather than `¶` + `&g`.
 
-**Provenance:** every row is currently `source=converter`. The rows come from the
-Unicode→Bijoy table of [Mad-FOX/bijoy2unicode](https://github.com/Mad-FOX/bijoy2unicode),
-with one change: র‍্য uses ZWJ, as the Unicode standard requires. **No row has been
-verified in the SutonnyMJ font yet**, because the font is not installed on the
-development machine. A release build (`-DSTRICT_LAYOUT=ON`) rejects unverified rows.
-After a row is checked by rendering it in SutonnyMJ, change its source to `verified`.
+**Provenance:** the rows come from the Unicode→Bijoy table of
+[Mad-FOX/bijoy2unicode](https://github.com/Mad-FOX/bijoy2unicode). The only change at
+import was that র‍্য uses ZWJ, as the Unicode standard requires.
+
+**Verified in the font (2026-10-07):** all 222 rows are `source=verified`. Each row was
+rendered with the SutonnyMJ font (supplied by the project owner and never committed) next
+to the Unicode text in Nirmala UI, and also inside real words, then checked by eye.
+Fifteen rows were corrected; the reasons are listed in the table header:
+
+- **ল-ফলা (7 rows):** used the soft hyphen `AD`, which renders as "-" or not at all. They
+  now use `AC`.
+- **রু, দ্রু, ন্ত, স্ত, ন্ত্ব (5 rows):** used `93` and `97`, which render detached or in a
+  different shape in this font. They are now written with plain letters.
+- **হ্ব (1 row):** `9F` read as "হব"; it now uses `A1`.
+- **ণ্ড (1 row):** now written with a visible hasant, because the `Ê` glyph renders broken.
+- **চ্ঞ (1 row):** kept, but it shows as half-চ + ঞ rather than a ligature.
+
+`STRICT_LAYOUT` is now ON by default, so any new unverified row fails the build.
 
 **Independent evidence:** the widely quoted SutonnyMJ samples "Avwg evsjvq Mvb MvB"
 (আমি বাংলায় গান গাই) and "Kv‡R" (কাজে) are reproduced exactly by typing the Bijoy keys

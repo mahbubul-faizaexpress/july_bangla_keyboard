@@ -4,3 +4,8 @@
 CMakeUserPresets.json
 *.user
 *.aps
+
+# Fonts are never committed (SutonnyMJ is a commercial font; used locally for verification only).
+*.ttf
+*.otf
+*.ttc

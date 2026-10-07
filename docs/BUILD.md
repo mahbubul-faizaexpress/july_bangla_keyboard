@@ -71,7 +71,7 @@ cmake --build build/asan --config Debug --target july_unit_tests july_fuzz
 |---|---|---|
 | `BUILD_TESTS` | ON | Unit tests (`july_unit_tests`) |
 | `BUILD_BENCHMARKS` | ON (x64) | `keyboard_benchmark.exe` |
-| `STRICT_LAYOUT` | OFF | Fail the build if any layout row is unconfirmed (`source=memory`) or any SutonnyMJ table row is unverified (`source=converter`). **Required for release builds.** |
+| `STRICT_LAYOUT` | ON | Fail the build if any layout row is unconfirmed (`source=memory`) or any SutonnyMJ table row is unverified (`source=converter`). **Required for release builds.** |
 | `BUILD_COMPANION` | ON (x64) | Tray/status companion `JulyBangla.exe` |
 | `ENABLE_DIAGNOSTICS` | OFF | Privacy-safe diagnostic instrumentation |
 | `JULY_SPECTRE` | OFF | Adds `/Qspectre`. It needs the VS component "MSVC Spectre-mitigated libs" (`Microsoft.VisualStudio.Component.VC.Runtimes.x86.x64.Spectre`) and is **required for release builds**. |

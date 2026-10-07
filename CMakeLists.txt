@@ -11,7 +11,7 @@ endif()
 
 option(BUILD_TESTS            "Build unit tests"                   ON)
 option(BUILD_BENCHMARKS       "Build keyboard_benchmark"           ON)
-option(STRICT_LAYOUT          "Reject unconfirmed layout rows (release)" OFF)
+option(STRICT_LAYOUT          "Reject unconfirmed layout or Classic rows" ON)
 option(BUILD_COMPANION       "Build the tray/status companion"    ON)
 option(ENABLE_DIAGNOSTICS     "Compile diagnostic instrumentation" OFF)
 option(JULY_SPECTRE           "Compile with /Qspectre (needs Spectre-mitigated libs)" OFF)
