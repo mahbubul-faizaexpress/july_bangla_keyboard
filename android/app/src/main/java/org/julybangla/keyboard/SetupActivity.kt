@@ -4,7 +4,9 @@ import android.app.Activity
 import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.provider.Settings
+import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 
@@ -24,6 +26,27 @@ class SetupActivity : Activity() {
         choose = findViewById(R.id.choose)
         enable.setOnClickListener { startActivity(Intent(Settings.ACTION_INPUT_METHOD_SETTINGS)) }
         choose.setOnClickListener { imm.showInputMethodPicker() }
+        if (savedInstanceState == null) showSplash()
+    }
+
+    // The remembrance splash, as on Windows: 5 seconds, a tap closes it after 3.5 seconds
+    // (so it can be read), then it fades out. Only when the app is opened, not on rotation.
+    private fun showSplash() {
+        val splash = findViewById<View>(R.id.splash)
+        val shownAt = SystemClock.uptimeMillis()
+        val hide = Runnable {
+            splash.animate().alpha(0f).setDuration(350).withEndAction { splash.visibility = View.GONE }
+        }
+        splash.visibility = View.VISIBLE
+        splash.alpha = 0f
+        splash.animate().alpha(1f).setDuration(350)
+        splash.postDelayed(hide, 5000)
+        splash.setOnClickListener {
+            if (SystemClock.uptimeMillis() - shownAt >= 3500) {
+                splash.removeCallbacks(hide)
+                hide.run()
+            }
+        }
     }
 
     override fun onResume() {

@@ -18,7 +18,9 @@ namespace {
 
 constexpr wchar_t kClassName[] = L"JulyBanglaSplash";
 constexpr UINT_PTR kCloseTimer = 1;
-constexpr UINT kVisibleMs = 4500;  // one-shot; the only timer in the program
+constexpr UINT kVisibleMs = 5000;     // one-shot; the only timer in the program
+constexpr ULONGLONG kMinVisibleMs = 3500;  // clicks before this are ignored
+constexpr DWORD kFadeMs = 350;
 constexpr int kWidthDip = 720;
 constexpr int kArtHeightDip = 405;  // 16:9, the artwork's aspect ratio
 constexpr int kBandHeightDip = 160;
@@ -95,6 +97,7 @@ HBITMAP loadArtwork(HINSTANCE instance, int& width, int& height) noexcept {
 void Splash::show(HINSTANCE instance, bool quitOnClose) noexcept {
     quitOnClose_ = quitOnClose;
     if (hwnd_ != nullptr) {
+        shownAt_ = GetTickCount64();
         SetTimer(hwnd_, kCloseTimer, kVisibleMs, nullptr);  // shown again: restart the countdown
         return;
     }
@@ -110,7 +113,7 @@ void Splash::show(HINSTANCE instance, bool quitOnClose) noexcept {
         if (!registered) return;
     }
     artwork_ = loadArtwork(instance, artworkWidth_, artworkHeight_);
-    hwnd_ = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TOOLWINDOW, kClassName, L"July Bangla Keyboard", WS_POPUP, 0, 0, 1,
+    hwnd_ = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_NOACTIVATE, kClassName, L"July Bangla Keyboard", WS_POPUP, 0, 0, 1,
                             1, nullptr, nullptr, instance, this);
     if (hwnd_ == nullptr) {
         if (artwork_ != nullptr) DeleteObject(artwork_);
@@ -120,8 +123,9 @@ void Splash::show(HINSTANCE instance, bool quitOnClose) noexcept {
     const DWM_WINDOW_CORNER_PREFERENCE round = DWMWCP_ROUND;
     DwmSetWindowAttribute(hwnd_, DWMWA_WINDOW_CORNER_PREFERENCE, &round, sizeof round);
     layout();
-    ShowWindow(hwnd_, SW_SHOW);
-    SetForegroundWindow(hwnd_);  // so that a key press can dismiss it
+    // Fade in without taking the focus: typing goes on in the user's program.
+    AnimateWindow(hwnd_, kFadeMs, AW_BLEND);
+    shownAt_ = GetTickCount64();
     SetTimer(hwnd_, kCloseTimer, kVisibleMs, nullptr);
 }
 
@@ -158,9 +162,7 @@ void Splash::paintFallbackHeader(HDC dc, const RECT& area, UINT dpi) noexcept {
              DT_CENTER | DT_SINGLELINE | DT_TOP);
 }
 
-void Splash::paint() noexcept {
-    PAINTSTRUCT ps;
-    HDC dc = BeginPaint(hwnd_, &ps);
+void Splash::paint(HDC dc) noexcept {
     const UINT dpi = GetDpiForWindow(hwnd_);
     RECT client{};
     GetClientRect(hwnd_, &client);
@@ -244,8 +246,13 @@ void Splash::paint() noexcept {
     swprintf_s(footer, L"জুলাই বাংলা কীবোর্ড   ·   সংস্করণ %s   ·   Ctrl+Alt+B", version);
     RECT foot{band.left, band.bottom - dip(26, dpi), band.right, band.bottom - dip(8, dpi)};
     drawText(dc, footer, foot, dip(12, dpi), FW_NORMAL, kFaint, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
+}
 
-    EndPaint(hwnd_, &ps);
+void Splash::dismiss() noexcept {
+    if (hwnd_ == nullptr) return;
+    KillTimer(hwnd_, kCloseTimer);
+    AnimateWindow(hwnd_, kFadeMs, AW_BLEND | AW_HIDE);  // fade out (uses WM_PRINTCLIENT)
+    close();
 }
 
 LRESULT CALLBACK Splash::windowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept {
@@ -260,16 +267,27 @@ LRESULT CALLBACK Splash::windowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM l
 
 LRESULT Splash::handle(UINT msg, WPARAM wParam, LPARAM lParam) noexcept {
     switch (msg) {
-    case WM_PAINT:
-        paint();
+    case WM_PAINT: {
+        PAINTSTRUCT ps;
+        HDC dc = BeginPaint(hwnd_, &ps);
+        paint(dc);
+        EndPaint(hwnd_, &ps);
+        return 0;
+    }
+    case WM_PRINTCLIENT:
+        paint(reinterpret_cast<HDC>(wParam));
         return 0;
     case WM_ERASEBKGND:
         return 1;  // everything is painted in WM_PAINT (no flicker)
+    case WM_MOUSEACTIVATE:
+        return MA_NOACTIVATE;  // never take the keyboard focus from the user's program
     case WM_TIMER:
+        dismiss();
+        return 0;
     case WM_LBUTTONUP:
     case WM_RBUTTONUP:
-    case WM_KEYDOWN:
-        close();
+        // A click closes it, but only after the user had time to read it.
+        if (GetTickCount64() - shownAt_ >= kMinVisibleMs) dismiss();
         return 0;
     case WM_DPICHANGED:
         layout();

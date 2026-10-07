@@ -113,5 +113,9 @@ $t = Get-Tile 96
 $t.Save((Join-Path $xhdpi 'ic_launcher.png'), [System.Drawing.Imaging.ImageFormat]::Png)
 $t.Dispose()
 
+# The remembrance artwork for the Android splash (same file as the Windows splash).
+New-Item -ItemType Directory -Force (Join-Path $androidRes 'drawable-nodpi') | Out-Null
+Copy-Item (Join-Path $root 'resources\splash.jpg') (Join-Path $androidRes 'drawable-nodpi\july_splash.jpg')
+
 $art.Dispose()
 Write-Host 'Icons written.'
