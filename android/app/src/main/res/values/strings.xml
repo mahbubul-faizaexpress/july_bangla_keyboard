@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">জুলাই বাংলা কীবোর্ড</string>
+    <string name="ime_name">জুলাই বাংলা কীবোর্ড</string>
+    <string name="subtype_bangla">বাংলা (বিজয়)</string>
+    <string name="slogan">জুলাইয়ের অনুভূতি স্মরণ হোক, বাংলা লেখার মাধ্যমে।</string>
+    <string name="step_enable">১. কীবোর্ড চালু করুন</string>
+    <string name="step_choose">২. জুলাই বাংলা বেছে নিন</string>
+    <string name="status_enabled">✓ চালু আছে</string>
+    <string name="status_selected">✓ বেছে নেওয়া হয়েছে</string>
+    <string name="try_hint">এখানে লিখে দেখুন…</string>
+    <string name="help">মোড বোতাম (বাং / ক্লা / EN) চাপলে মোড বদলায়: বাংলা → ক্লাসিক → English। বোতামটি চেপে ধরে রাখলে অন্য কীবোর্ডে যাওয়া যায়। হার্ডওয়্যার কীবোর্ডে Ctrl+Alt+B দিয়ে মোড বদলান।</string>
+    <string name="privacy">এই কীবোর্ড ইন্টারনেট ব্যবহার করে না, কোনো অনুমতি চায় না, আর আপনার লেখা কোথাও পাঠায় বা জমা রাখে না।</string>
+</resources>

@@ -11,7 +11,7 @@ src/engine/      shared engine (all platforms)
 layouts/         shared Bijoy layout and verified SutonnyMJ table
 tests/           shared golden files and engine tests
 src/tip, src/app Windows (TSF text service, status bar, tray)
-android/         Android (InputMethodService, Kotlin + JNI bridge to the engine)
+android/         Android (InputMethodService, Kotlin + JNI bridge to the engine) -- preview
 linux/           Linux (Fcitx5 addon, later IBus)                     -- planned
 macos/           macOS (Input Method Kit)                              -- planned
 ```
@@ -31,7 +31,7 @@ The engine identifies keys by PC scan code. On-screen keyboards pass the scan co
 Bijoy key they draw. Hardware keyboards map the platform key code to the scan code with
 a small table.
 
-## Android (next)
+## Android (preview in android/, see android/README.md)
 
 - **Language:** Kotlin for `InputMethodService` and the on-screen keyboard (an Android
   requirement), plus a small C++ JNI bridge to the shared engine, built with the NDK and

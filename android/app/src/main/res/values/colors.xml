@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- July identity: Bangladesh flag green and red. -->
+    <color name="july_green">#006A4E</color>
+    <color name="july_red">#F42A41</color>
+    <color name="kb_background">#E8EBEA</color>
+    <color name="kb_key">#FFFFFF</color>
+    <color name="kb_key_special">#C9D1CE</color>
+    <color name="kb_key_pressed">#B3BDB9</color>
+    <color name="kb_text">#1B1F1E</color>
+    <color name="kb_hint">#6B7572</color>
+</resources>
