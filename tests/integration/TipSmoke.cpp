@@ -36,7 +36,7 @@ constexpr LONG kModeClassic = 2;
 
 struct Case {
     LONG mode;
-    const char* keys;  // letters (uppercase = Shift); '<' Backspace, newline Enter, ' ' Space, '1' numpad 1, '^' caret to start
+    const char* keys;  // letters (uppercase = Shift); '<' Backspace, newline Enter, ' ' Space, '1' numpad 1, '^' mouse click at the start
     const wchar_t* expected;
     const char* name;
 };
@@ -212,6 +212,20 @@ int wmain(int argc, wchar_t** argv) {
     SetForegroundWindow(frame);
     SetFocus(edit);
     pump();
+    if (GetForegroundWindow() != frame) {
+        // Ask the user to click the window: flash it and wait up to 60 seconds.
+        SetWindowTextW(frame, L"july_tip_smoke - CLICK HERE to start the keyboard test");
+        FLASHWINFO flash{sizeof flash, frame, FLASHW_ALL | FLASHW_TIMERNOFG, 0, 0};
+        FlashWindowEx(&flash);
+        std::printf("Click the window titled \"july_tip_smoke - CLICK HERE...\" to start (waiting up to 60 s)...\n");
+        std::fflush(stdout);
+        for (int i = 0; i < 300 && GetForegroundWindow() != frame; ++i) {
+            pump();
+            Sleep(200);
+        }
+        SetFocus(edit);
+        pump();
+    }
     const bool isForeground = GetForegroundWindow() == frame;
     if (!isForeground) {
         std::printf("SKIPPED: the test window could not become the foreground window (Windows foreground lock).\n"
@@ -294,8 +308,10 @@ int wmain(int argc, wchar_t** argv) {
                             : *k == '1'  ? VK_NUMPAD1
                                          : static_cast<UINT>(shift ? *k : *k - 'a' + 'A');
             if (*k == '^') {
-                // Move the caret to the start of the text, as a mouse click would.
-                SendMessageW(edit, EM_SETSEL, 0, 0);
+                // Click at the very start of the text with the mouse, as a user would.
+                const LPARAM point = MAKELPARAM(1, 4);
+                SendMessageW(edit, WM_LBUTTONDOWN, MK_LBUTTON, point);
+                SendMessageW(edit, WM_LBUTTONUP, 0, point);
                 pump();
                 continue;
             }

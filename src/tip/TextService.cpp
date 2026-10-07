@@ -12,13 +12,14 @@ namespace july::tip {
 
 namespace {
 
-// Edit session carrying one EditResult. For synchronous requests it lives on the caller's
-// stack (no allocation per keystroke): TSF runs DoEditSession before RequestEditSession
-// returns and does not keep the object. Only the asynchronous fallback heap-allocates.
+// Edit session carrying one EditResult (or, with endOnly, just "end the composition").
+// For synchronous requests it lives on the caller's stack (no allocation per keystroke):
+// TSF runs DoEditSession before RequestEditSession returns and does not keep the object.
+// Only the asynchronous fallback heap-allocates.
 class EditSession final : public ITfEditSession {
 public:
-    EditSession(TextService* service, ITfContext* context, const EditResult& result, bool heap) noexcept
-        : service_(service), context_(context), result_(result), refs_(heap ? 1 : 0), heap_(heap) {
+    EditSession(TextService* service, ITfContext* context, const EditResult& result, bool endOnly, bool heap) noexcept
+        : service_(service), context_(context), result_(result), refs_(heap ? 1 : 0), endOnly_(endOnly), heap_(heap) {
         // Keep the text service alive until the session has run: a queued (asynchronous)
         // session may run after the service was deactivated and released by TSF.
         service_->AddRef();
@@ -41,7 +42,7 @@ public:
         return refs;
     }
     STDMETHODIMP DoEditSession(TfEditCookie ec) override {
-        return service_->applyInSession(ec, context_.Get(), result_);
+        return endOnly_ ? service_->endCompositionInSession(ec) : service_->applyInSession(ec, context_.Get(), result_);
     }
 
     ULONG refs() const noexcept { return refs_; }
@@ -54,6 +55,7 @@ private:
     ComPtr<ITfContext> context_;
     EditResult result_;
     std::atomic<ULONG> refs_;
+    bool endOnly_;
     bool heap_;
 };
 
@@ -296,17 +298,18 @@ STDMETHODIMP TextService::OnEndEdit(ITfContext* context, TfEditCookie ecReadOnly
     ComPtr<ITfRange> compositionRange;
     if (FAILED(composition_->GetRange(&compositionRange))) return S_OK;
 
-    // Our own edits leave the caret at the end of the composition (inside). Anything that
-    // puts the caret or selection outside it means the user moved away.
-    LONG startOrder = 0;
-    LONG endOrder = 0;
-    const bool outside =
-        SUCCEEDED(compositionRange->CompareStart(ecReadOnly, selectionRange.Get(), TF_ANCHOR_START, &startOrder)) &&
-        SUCCEEDED(compositionRange->CompareEnd(ecReadOnly, selectionRange.Get(), TF_ANCHOR_END, &endOrder)) &&
-        (startOrder > 0 || endOrder < 0);
+    // Our own edits always leave a collapsed caret exactly at the end of the composition.
+    // Any other selection (caret before or inside the syllable, a selected range, or a
+    // caret elsewhere in the document) means the user moved away.
+    LONG toSelectionStart = 0;
+    LONG toSelectionEnd = 0;
+    const bool moved =
+        SUCCEEDED(compositionRange->CompareEnd(ecReadOnly, selectionRange.Get(), TF_ANCHOR_START, &toSelectionStart)) &&
+        SUCCEEDED(compositionRange->CompareEnd(ecReadOnly, selectionRange.Get(), TF_ANCHOR_END, &toSelectionEnd)) &&
+        (toSelectionStart != 0 || toSelectionEnd != 0);
     // The document is read-locked here, so the commit is queued as an asynchronous edit
     // session (apply() falls back to that automatically).
-    if (outside) commitComposition();
+    if (moved) commitComposition();
     return S_OK;
 }
 
@@ -453,15 +456,25 @@ void TextService::commitComposition() noexcept {
         composer_.reset();
         return;
     }
-    const EditResult result = composer_.commitAll();
-    apply(context.Get(), result);
+    // The composition already shows exactly the syllable's text, so committing only ends
+    // the composition: no text is rewritten and the caret is left where it is. (Rewriting
+    // would also move the caret back to our syllable after the user clicked elsewhere.)
+    composer_.reset();
+    apply(context.Get(), EditResult{}, /*endOnly=*/true);
 }
 
-HRESULT TextService::apply(ITfContext* context, const EditResult& result) noexcept {
+HRESULT TextService::endCompositionInSession(TfEditCookie ec) noexcept {
+    if (!composition_) return S_OK;
+    const HRESULT hr = composition_->EndComposition(ec);
+    composition_.Reset();
+    return hr;
+}
+
+HRESULT TextService::apply(ITfContext* context, const EditResult& result, bool endOnly) noexcept {
     if (!composition_ && result.commit.empty() && result.composition.empty()) return S_OK;
 
     // Synchronous so the text lands before any key we pass on to the application.
-    EditSession session(this, context, result, /*heap=*/false);
+    EditSession session(this, context, result, endOnly, /*heap=*/false);
     session.AddRef();
     HRESULT sessionResult = E_FAIL;
     HRESULT hr = context->RequestEditSession(clientId_, &session, TF_ES_SYNC | TF_ES_READWRITE, &sessionResult);
@@ -471,7 +484,7 @@ HRESULT TextService::apply(ITfContext* context, const EditResult& result) noexce
 
     // The document could not be locked synchronously: queue it (ordering is preserved by
     // TSF's edit-session queue).
-    auto* queued = new (std::nothrow) EditSession(this, context, result, /*heap=*/true);
+    auto* queued = new (std::nothrow) EditSession(this, context, result, endOnly, /*heap=*/true);
     if (queued == nullptr) return E_OUTOFMEMORY;
     hr = context->RequestEditSession(clientId_, queued, TF_ES_ASYNCDONTCARE | TF_ES_READWRITE, &sessionResult);
     queued->Release();

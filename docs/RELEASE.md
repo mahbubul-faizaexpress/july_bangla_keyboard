@@ -20,7 +20,7 @@ A build is production-ready only when every gate is green. Status as of 0.3.0:
 | 1 | All unit, golden, fuzz and generator tests pass (x64 Debug/Release, x86 Release) | ✅ 22/22 ctest |
 | 2 | Static analysis (`/analyze`) clean | ✅ |
 | 3 | AddressSanitizer run of unit tests and fuzzer clean | ✅ (last run at 0.2.0, engine unchanged since) |
-| 4 | End-to-end TSF smoke test (`july_tip_smoke`) passes against the **installed** build | ⏳ needs 0.3.0 installed, with the test window in the foreground |
+| 4 | End-to-end TSF smoke test (`july_tip_smoke`) passes against the **installed** build | ✅ 18/18 on 0.3.0 (run by double-clicking `Keyboard-Test.cmd`) |
 | 5 | Every Bijoy layout row verified against the master chart | ✅ 79/79 |
 | 6 | Every SutonnyMJ Classic row verified in the font (`source=verified`) | ❌ 0/222 (font not available) |
 | 7 | Manual compatibility checklist (docs/COMPATIBILITY.md) in Notepad, Word, Chrome, Edge, Firefox, WinUI | ⏳ partial |

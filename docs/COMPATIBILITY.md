@@ -9,8 +9,9 @@ Legend: ✅ works · ❌ fails (see notes) · ⚠️ works with a caveat · — 
 
 - **Automated:** `july_tip_smoke.exe` (built with the tests) drives the registered text
   service through real TSF. It uses a TSF-enabled RichEdit control and delivers keys via
-  `ITfKeystrokeMgr`. 16/16 checks pass on 2026-10-06:
-  - 13 typing cases
+  `ITfKeystrokeMgr`. 18/18 checks pass on 0.3.0 (2026-10-07):
+  - 15 typing cases, including numpad digits and a mouse click that moves the caret
+    out of an open syllable
   - 3 input-indicator checks
 - **User:** typed by hand on the developer machine (Windows 11 build 26300).
 

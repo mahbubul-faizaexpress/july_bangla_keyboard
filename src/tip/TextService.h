@@ -64,12 +64,13 @@ public:
 
     // Called from inside an edit session.
     HRESULT applyInSession(TfEditCookie ec, ITfContext* context, const EditResult& result) noexcept;
+    HRESULT endCompositionInSession(TfEditCookie ec) noexcept;  // finalize without rewriting text
 
 private:
     ~TextService() = default;
 
     EditResult process(WPARAM vk, LPARAM lParam) noexcept;
-    HRESULT apply(ITfContext* context, const EditResult& result) noexcept;
+    HRESULT apply(ITfContext* context, const EditResult& result, bool endOnly = false) noexcept;
     void commitComposition() noexcept;
     void watchDocument(ITfDocumentMgr* documentMgr) noexcept;  // (re)advise the text edit sink
     void unwatchDocument() noexcept;
