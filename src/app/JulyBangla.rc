@@ -5,4 +5,5 @@
 
 #include "Resource.h"
 
+IDI_APP          ICON   "../../resources/JulyBangla.ico"
 IDR_SPLASH_IMAGE RCDATA "../../resources/splash.jpg"

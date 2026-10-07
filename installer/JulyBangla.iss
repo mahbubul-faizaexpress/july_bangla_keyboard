@@ -34,6 +34,7 @@ Compression=lzma2/max
 SolidCompression=yes
 WizardStyle=modern
 UninstallDisplayName=July Bangla Keyboard
+SetupIconFile=..\resources\JulyBangla.ico
 UninstallDisplayIcon={app}\JulyBangla.exe
 VersionInfoVersion={#AppVersion}
 VersionInfoProductName=July Bangla Keyboard

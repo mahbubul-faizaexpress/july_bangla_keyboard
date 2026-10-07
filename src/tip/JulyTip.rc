@@ -2,3 +2,6 @@
 #define JULY_ORIGINAL_FILENAME "JulyTip.dll"
 #define JULY_FILE_TYPE         VFT_DLL
 #include "../../cmake/VersionInfo.rc.inc"
+
+// Icon index 0: shown for the keyboard in the Windows language list and switcher.
+1 ICON "../../resources/JulyTip.ico"
