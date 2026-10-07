@@ -4,9 +4,10 @@
 
 namespace july::app {
 
-// Remembrance splash shown when the user opens the program (not at Windows startup).
-// Shows the name, the slogan and the dedication; closes after a few seconds, on click
-// or on any key. Space is reserved for a short video in a later version.
+// Remembrance splash shown when the user opens the program (not at Windows startup):
+// the July artwork on top, the slogan and dedication on a band below it. Closes after a
+// few seconds, on click or on any key. The artwork is decoded (WIC) only while the
+// splash is visible and released when it closes.
 class Splash {
 public:
     void show(HINSTANCE instance) noexcept;
@@ -17,8 +18,12 @@ private:
     LRESULT handle(UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
     void layout() noexcept;
     void paint() noexcept;
+    void paintFallbackHeader(HDC dc, const RECT& area, UINT dpi) noexcept;
 
     HWND hwnd_ = nullptr;
+    HBITMAP artwork_ = nullptr;  // premultiplied 32-bit DIB of the artwork, if decoded
+    int artworkWidth_ = 0;
+    int artworkHeight_ = 0;
 };
 
 // Shared wording (also used by the About box).

@@ -2,3 +2,7 @@
 #define JULY_ORIGINAL_FILENAME "JulyBangla.exe"
 #define JULY_FILE_TYPE         VFT_APP
 #include "../../cmake/VersionInfo.rc.inc"
+
+#include "Resource.h"
+
+IDR_SPLASH_IMAGE RCDATA "../../resources/splash.jpg"

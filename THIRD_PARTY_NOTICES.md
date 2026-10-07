@@ -22,6 +22,13 @@ keyboard layout. They were read from Bijoy keyboard charts supplied by the proje
 The Bijoy layout is a proprietary layout by Mustafa Jabbar, registered under the
 copyright law of Bangladesh. Get legal advice before distributing this layout publicly.
 
+## Splash artwork
+
+`resources/splash.jpg` ("জুলাই 36": students raising the flag before a red sun) was
+supplied by the project owner for the remembrance splash screen. Before any public
+release, confirm the artist and the right to redistribute it, and credit the artist here
+and in the About box.
+
 ## Fonts
 
 - No font files are included.
