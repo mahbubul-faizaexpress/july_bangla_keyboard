@@ -23,7 +23,7 @@ A build is production-ready only when every gate is green. Status as of 0.3.0:
 | 4 | End-to-end TSF smoke test (`july_tip_smoke`) passes against the **installed** build | ✅ 18/18 on 0.3.0 (run by double-clicking `Keyboard-Test.cmd`) |
 | 5 | Every Bijoy layout row verified against the master chart | ✅ 79/79 |
 | 6 | Every SutonnyMJ Classic row verified in the font (`source=verified`) | ✅ 222/222 (2026-10-07; 15 rows corrected, see the table header) |
-| 7 | Manual compatibility checklist (docs/COMPATIBILITY.md) in Notepad, Word, Chrome, Edge, Firefox, WinUI | ⏳ partial |
+| 7 | Manual compatibility checklist (docs/COMPATIBILITY.md) in Notepad, Word, Chrome, Edge, Firefox, WinUI | ⏳ owner reported "working fine" (2026-10-07); per-app results still to record |
 | 8 | Install → upgrade → uninstall → reinstall on a clean machine; no leftover CTF/CLSID keys | ⏳ install verified; uninstall not yet |
 | 9 | Binaries and installer Authenticode-signed and timestamped | ❌ no certificate yet |
 | 10 | Legal: layout/name review done; splash artwork rights and credit confirmed | ⏳ see THIRD_PARTY_NOTICES.md |
@@ -55,3 +55,14 @@ or antivirus.
 | Application | `VERSION` in CMakeLists.txt, SemVer | every release |
 | Engine | `JULY_ENGINE_VERSION` | composer or backend behaviour changes |
 | Layout | `JULY_LAYOUT_VERSION` | any change to `layouts/*.layout` or `*.classic` |
+
+## Android gates
+
+| # | Gate | Status |
+|---|---|---|
+| A1 | Debug/release builds and JVM unit tests pass | ✅ |
+| A2 | Tested on a real phone | ✅ owner reported "working fine" (2026-10-07); device/apps to record |
+| A3 | Final package name chosen (cannot change after the first Play release) | ⏳ `org.julybangla.keyboard` |
+| A4 | Release signing key created and backed up; App Bundle signed | ❌ |
+| A5 | Accessibility (TalkBack) for the on-screen keys | ❌ |
+| A6 | Play Console listing, privacy policy ("collects no data"), data-safety form | ❌ |
