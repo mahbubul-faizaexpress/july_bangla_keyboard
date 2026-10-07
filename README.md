@@ -58,6 +58,7 @@ powershell -ExecutionPolicy Bypass -File tools\Build-Installer.ps1
 - [Performance](docs/PERFORMANCE.md)
 - [Security and privacy](docs/SECURITY.md)
 - [Roadmap](docs/ROADMAP.md)
+- [Platforms plan (Android, Linux, macOS)](docs/PLATFORMS.md)
 - [Release process and production gates](docs/RELEASE.md)
 - [সমস্যা ও সমাধান (Troubleshooting)](docs/TROUBLESHOOTING.md)
 - [Third-party notices](THIRD_PARTY_NOTICES.md)
