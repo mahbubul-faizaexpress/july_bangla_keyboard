@@ -84,6 +84,7 @@ void report(FILE* out, const char* fmt, double a = 0, double b = 0, double c = 0
 } // namespace
 
 // Count every heap allocation made by this process (engine + benchmark harness).
+#pragma warning(suppress : 28251)  // the replacement new keeps the standard contract
 void* operator new(std::size_t size) {
     ++g_allocations;
     if (void* p = std::malloc(size ? size : 1)) return p;

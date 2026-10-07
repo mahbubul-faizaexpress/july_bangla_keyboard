@@ -20,7 +20,8 @@ class TextService final : public ITfTextInputProcessorEx,
                           public ITfThreadMgrEventSink,
                           public ITfKeyEventSink,
                           public ITfCompositionSink,
-                          public ITfCompartmentEventSink {
+                          public ITfCompartmentEventSink,
+                          public ITfTextEditSink {
 public:
     TextService() noexcept = default;
     TextService(const TextService&) = delete;
@@ -57,6 +58,10 @@ public:
     // ITfCompartmentEventSink: the input mode changed (in this or any other process).
     STDMETHODIMP OnChange(REFGUID guid) override;
 
+    // ITfTextEditSink: the caret left our composition (mouse click, arrow keys handled by
+    // the application, programmatic edits) -> finalize it where it is.
+    STDMETHODIMP OnEndEdit(ITfContext* context, TfEditCookie ecReadOnly, ITfEditRecord* record) override;
+
     // Called from inside an edit session.
     HRESULT applyInSession(TfEditCookie ec, ITfContext* context, const EditResult& result) noexcept;
 
@@ -66,6 +71,8 @@ private:
     EditResult process(WPARAM vk, LPARAM lParam) noexcept;
     HRESULT apply(ITfContext* context, const EditResult& result) noexcept;
     void commitComposition() noexcept;
+    void watchDocument(ITfDocumentMgr* documentMgr) noexcept;  // (re)advise the text edit sink
+    void unwatchDocument() noexcept;
     void setMode(InputMode mode) noexcept;
     static void onLangBarClick(void* self) noexcept;
     bool readModeCompartment(InputMode& mode) const noexcept;  // false if no mode is set yet
@@ -81,6 +88,8 @@ private:
     bool keyPreserved_ = false;
     Microsoft::WRL::ComPtr<ITfCompartment> modeCompartment_;
     DWORD compartmentSinkCookie_ = TF_INVALID_COOKIE;
+    Microsoft::WRL::ComPtr<ITfContext> watchedContext_;  // context with our text edit sink
+    DWORD textEditSinkCookie_ = TF_INVALID_COOKIE;
 
     Microsoft::WRL::ComPtr<ITfComposition> composition_;  // our open composition, if any
     InputMode mode_ = InputMode::English;

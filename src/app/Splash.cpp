@@ -4,6 +4,8 @@
 #include <wincodec.h>
 #include <wrl/client.h>
 
+#include <algorithm>
+
 #include "ModeVisuals.h"
 #include "Resource.h"
 #include "july/engine/Version.h"
@@ -19,11 +21,11 @@ constexpr UINT_PTR kCloseTimer = 1;
 constexpr UINT kVisibleMs = 4500;  // one-shot; the only timer in the program
 constexpr int kWidthDip = 720;
 constexpr int kArtHeightDip = 405;  // 16:9, the artwork's aspect ratio
-constexpr int kBandHeightDip = 138;
+constexpr int kBandHeightDip = 160;
 
 constexpr COLORREF kRed = RGB(0xF4, 0x2A, 0x41);
 constexpr COLORREF kGreen = RGB(0x00, 0x6A, 0x4E);
-constexpr COLORREF kBand = RGB(0x12, 0x22, 0x1D);    // deep green-black, from the artwork
+
 constexpr COLORREF kCream = RGB(0xFF, 0xF4, 0xE2);
 constexpr COLORREF kSoft = RGB(0xB8, 0xC4, 0xBE);
 constexpr COLORREF kFaint = RGB(0x7E, 0x8C, 0x86);
@@ -90,7 +92,8 @@ HBITMAP loadArtwork(HINSTANCE instance, int& width, int& height) noexcept {
 
 } // namespace
 
-void Splash::show(HINSTANCE instance) noexcept {
+void Splash::show(HINSTANCE instance, bool quitOnClose) noexcept {
+    quitOnClose_ = quitOnClose;
     if (hwnd_ != nullptr) {
         SetTimer(hwnd_, kCloseTimer, kVisibleMs, nullptr);  // shown again: restart the countdown
         return;
@@ -186,19 +189,59 @@ void Splash::paint() noexcept {
     FillRect(dc, &greenLine, green);
     DeleteObject(green);
     RECT band{client.left, greenLine.bottom, client.right, client.bottom};
-    HBRUSH bandBrush = CreateSolidBrush(kBand);
-    FillRect(dc, &band, bandBrush);
-    DeleteObject(bandBrush);
+    // Soft vertical gradient, from the artwork's dark green to near-black.
+    TRIVERTEX vertices[2] = {
+        {band.left, band.top, 0x1A00, 0x3400, 0x2C00, 0xFF00},
+        {band.right, band.bottom, 0x0B00, 0x1600, 0x1300, 0xFF00},
+    };
+    GRADIENT_RECT gradient{0, 1};
+    GradientFill(dc, vertices, 2, &gradient, 1, GRADIENT_FILL_RECT_V);
 
     SetBkMode(dc, TRANSPARENT);
-    RECT slogan{band.left + dip(24, dpi), band.top + dip(12, dpi), band.right - dip(24, dpi), band.top + dip(72, dpi)};
-    drawText(dc, kSlogan, slogan, dip(22, dpi), FW_SEMIBOLD, kCream, DT_CENTER | DT_WORDBREAK);
-    RECT dedication{band.left + dip(24, dpi), band.top + dip(78, dpi), band.right - dip(24, dpi),
-                    band.top + dip(102, dpi)};
+    const int centerX = (band.left + band.right) / 2;
+
+    // Slogan: two balanced lines, the most prominent text.
+    RECT slogan{band.left + dip(24, dpi), band.top + dip(14, dpi), band.right - dip(24, dpi), band.top + dip(78, dpi)};
+    drawText(dc, kSlogan, slogan, dip(24, dpi), FW_SEMIBOLD, kCream, DT_CENTER | DT_WORDBREAK);
+
+    // Ornament: a small red sun between two thin lines.
+    const int ornamentY = band.top + dip(88, dpi);
+    const int lineHalf = dip(64, dpi);
+    const int gap = dip(10, dpi);
+    HPEN pen = CreatePen(PS_SOLID, std::max(1, dip(1, dpi)), RGB(0x5E, 0x75, 0x6C));
+    HGDIOBJ oldPen = SelectObject(dc, pen);
+    MoveToEx(dc, centerX - gap - lineHalf, ornamentY, nullptr);
+    LineTo(dc, centerX - gap, ornamentY);
+    MoveToEx(dc, centerX + gap, ornamentY, nullptr);
+    LineTo(dc, centerX + gap + lineHalf, ornamentY);
+    SelectObject(dc, oldPen);
+    DeleteObject(pen);
+    const int sun = dip(4, dpi);
+    HBRUSH sunBrush = CreateSolidBrush(kRed);
+    HGDIOBJ oldBrush = SelectObject(dc, sunBrush);
+    HGDIOBJ noPen = SelectObject(dc, GetStockObject(NULL_PEN));
+    Ellipse(dc, centerX - sun, ornamentY - sun, centerX + sun + 1, ornamentY + sun + 1);
+    SelectObject(dc, noPen);
+    SelectObject(dc, oldBrush);
+    DeleteObject(sunBrush);
+
+    // Dedication.
+    RECT dedication{band.left + dip(24, dpi), ornamentY + dip(6, dpi), band.right - dip(24, dpi),
+                    ornamentY + dip(30, dpi)};
     drawText(dc, kDedication, dedication, dip(15, dpi), FW_NORMAL, kSoft, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 
-    wchar_t footer[96];
-    swprintf_s(footer, L"July Bangla Keyboard %hs  ·  Ctrl+Alt+B", kAppVersion);
+    // Footer: name and version in Bangla digits, and the shortcut.
+    wchar_t version[24] = {};
+    {
+        const char* v = kAppVersion;
+        int i = 0;
+        for (; v[i] != '\0' && i < 23; ++i) {
+            version[i] = (v[i] >= '0' && v[i] <= '9') ? static_cast<wchar_t>(0x09E6 + (v[i] - '0')) : static_cast<wchar_t>(v[i]);
+        }
+        version[i] = L'\0';
+    }
+    wchar_t footer[128];
+    swprintf_s(footer, L"জুলাই বাংলা কীবোর্ড   ·   সংস্করণ %s   ·   Ctrl+Alt+B", version);
     RECT foot{band.left, band.bottom - dip(26, dpi), band.right, band.bottom - dip(8, dpi)};
     drawText(dc, footer, foot, dip(12, dpi), FW_NORMAL, kFaint, DT_CENTER | DT_SINGLELINE | DT_VCENTER);
 
@@ -239,6 +282,7 @@ LRESULT Splash::handle(UINT msg, WPARAM wParam, LPARAM lParam) noexcept {
         hwnd_ = nullptr;
         if (artwork_ != nullptr) DeleteObject(artwork_);  // free the image memory again
         artwork_ = nullptr;
+        if (quitOnClose_) PostQuitMessage(0);
         return DefWindowProcW(hwnd, msg, wParam, lParam);
     }
     default:

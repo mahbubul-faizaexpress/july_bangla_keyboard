@@ -20,6 +20,6 @@ TEST_CASE("modeLabel returns exact UTF-8 labels") {
     CHECK(july::modeLabel(InputMode::English) == u8"EN");
     // বাংলা = U+09AC U+09BE U+0982 U+09B2 U+09BE
     CHECK(july::modeLabel(InputMode::Unicode) == u8"বাংলা");
-    // বিজয় = U+09AC U+09BF U+099C U+09AF U+09BC (NFC: U+09DF is a composition exclusion)
-    CHECK(july::modeLabel(InputMode::Classic) == u8"বিজয়");
+    // ক্লাসিক = U+0995 U+09CD U+09B2 U+09BE U+09B8 U+09BF U+0995
+    CHECK(july::modeLabel(InputMode::Classic) == u8"ক্লাসিক");
 }

@@ -9,8 +9,10 @@ const ModeVisual kVisuals[] = {
     {L"EN", L"EN", L"July Bangla Keyboard — English", RGB(0x55, 0x5F, 0x6D)},
     {L"বাংলা", L"বা",                          // বাংলা / বা
      L"July Bangla Keyboard — বাংলা (Unicode)", RGB(0x1B, 0x7F, 0x3B)},
-    {L"বিজয়", L"বি",                          // বিজয় / বি
-     L"July Bangla Keyboard — বিজয় (Classic / SutonnyMJ)", RGB(0xC0, 0x39, 0x2B)},
+    // Classic output is SutonnyMJ / Bijoy-compatible; the product does not use the
+    // registered "Bijoy" name for its own mode.
+    {L"ক্লাসিক", L"ক",                          // ক্লাসিক / ক
+     L"July Bangla Keyboard — ক্লাসিক (SutonnyMJ / ANSI)", RGB(0xC0, 0x39, 0x2B)},
 };
 
 } // namespace
@@ -30,7 +32,7 @@ HFONT createUiFont(int pixelHeight, int weight) noexcept {
     lf.lfWeight = weight;
     lf.lfCharSet = DEFAULT_CHARSET;
     lf.lfQuality = CLEARTYPE_QUALITY;
-    lstrcpynW(lf.lfFaceName, L"Nirmala UI", LF_FACESIZE);
+    (void)lstrcpynW(lf.lfFaceName, L"Nirmala UI", LF_FACESIZE);  // constant, always fits
     return CreateFontIndirectW(&lf);
 }
 

@@ -10,7 +10,8 @@ namespace july::app {
 // splash is visible and released when it closes.
 class Splash {
 public:
-    void show(HINSTANCE instance) noexcept;
+    // quitOnClose: post WM_QUIT when the splash closes (standalone preview mode).
+    void show(HINSTANCE instance, bool quitOnClose = false) noexcept;
     void close() noexcept;
 
 private:
@@ -21,6 +22,7 @@ private:
     void paintFallbackHeader(HDC dc, const RECT& area, UINT dpi) noexcept;
 
     HWND hwnd_ = nullptr;
+    bool quitOnClose_ = false;
     HBITMAP artwork_ = nullptr;  // premultiplied 32-bit DIB of the artwork, if decoded
     int artworkWidth_ = 0;
     int artworkHeight_ = 0;

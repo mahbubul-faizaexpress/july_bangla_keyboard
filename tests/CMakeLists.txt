@@ -61,6 +61,6 @@ set_tests_properties(classicgen_strict_rejects_converter_row PROPERTIES
 # (tools/dev/Register-Dev.ps1), so it is built but not part of the default ctest run.
 if(NOT JULY_ARCH_X86)
     add_executable(july_tip_smoke integration/TipSmoke.cpp)
-    target_link_libraries(july_tip_smoke PRIVATE ole32 oleaut32 user32)
+    target_link_libraries(july_tip_smoke PRIVATE ole32 oleaut32 user32 version)
     july_set_target_options(july_tip_smoke)
 endif()

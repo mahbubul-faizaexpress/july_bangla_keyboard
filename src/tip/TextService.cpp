@@ -18,7 +18,11 @@ namespace {
 class EditSession final : public ITfEditSession {
 public:
     EditSession(TextService* service, ITfContext* context, const EditResult& result, bool heap) noexcept
-        : service_(service), context_(context), result_(result), refs_(heap ? 1 : 0), heap_(heap) {}
+        : service_(service), context_(context), result_(result), refs_(heap ? 1 : 0), heap_(heap) {
+        // Keep the text service alive until the session has run: a queued (asynchronous)
+        // session may run after the service was deactivated and released by TSF.
+        service_->AddRef();
+    }
 
     STDMETHODIMP QueryInterface(REFIID riid, void** ppv) override {
         if (ppv == nullptr) return E_POINTER;
@@ -43,10 +47,10 @@ public:
     ULONG refs() const noexcept { return refs_; }
 
 private:
-    ~EditSession() = default;
+    ~EditSession() { service_->Release(); }
     friend class TextService;
 
-    TextService* service_;  // kept alive by the caller for the session's duration
+    TextService* service_;  // owned reference (AddRef in the constructor)
     ComPtr<ITfContext> context_;
     EditResult result_;
     std::atomic<ULONG> refs_;
@@ -67,12 +71,22 @@ bool isModifierKey(WPARAM vk) noexcept {
     }
 }
 
-// Scan code from WM_KEYDOWN lParam; extended keys (arrows, Insert, numpad Enter, ...) are
-// moved out of the layout's range so they are never mistaken for typing keys.
-std::uint16_t scanCode(LPARAM lParam) noexcept {
+// Scan code for the engine from WM_KEYDOWN. Extended keys (arrows, Insert, numpad Enter,
+// ...) are moved out of the layout's range so they are never mistaken for typing keys.
+// Numpad digits (NumLock on) are mapped to the number-row keys, so they give Bengali
+// digits in Bangla modes.
+std::uint16_t scanCode(WPARAM vk, LPARAM lParam) noexcept {
+    if (vk >= VK_NUMPAD1 && vk <= VK_NUMPAD9) return static_cast<std::uint16_t>(0x02 + (vk - VK_NUMPAD1));
+    if (vk == VK_NUMPAD0) return 0x0B;
     const auto scan = static_cast<std::uint16_t>((lParam >> 16) & 0xFF);
     const bool extended = ((lParam >> 24) & 1) != 0;
     return extended ? static_cast<std::uint16_t>(scan | 0x100) : scan;
+}
+
+// Shift state for the engine. Numpad digits never use the shifted number-row symbols.
+bool shiftFor(WPARAM vk) noexcept {
+    if (vk >= VK_NUMPAD0 && vk <= VK_NUMPAD9) return false;
+    return keyDown(VK_SHIFT);
 }
 
 ComposerOptions optionsFor(InputMode mode) noexcept {
@@ -98,6 +112,8 @@ STDMETHODIMP TextService::QueryInterface(REFIID riid, void** ppv) {
         *ppv = static_cast<ITfCompositionSink*>(this);
     } else if (riid == __uuidof(ITfCompartmentEventSink)) {
         *ppv = static_cast<ITfCompartmentEventSink*>(this);
+    } else if (riid == __uuidof(ITfTextEditSink)) {
+        *ppv = static_cast<ITfTextEditSink*>(this);
     } else {
         return E_NOINTERFACE;
     }
@@ -140,7 +156,7 @@ STDMETHODIMP TextService::ActivateEx(ITfThreadMgr* threadMgr, TfClientId clientI
     }
 
     const TF_PRESERVEDKEY cycleKey{'B', TF_MOD_CONTROL | TF_MOD_ALT};
-    static constexpr wchar_t kCycleDescription[] = L"Switch input mode (English / Bangla / Bijoy)";
+    static constexpr wchar_t kCycleDescription[] = L"Switch input mode (English / Bangla Unicode / Bangla Classic)";
     keyPreserved_ = SUCCEEDED(keystrokes->PreserveKey(clientId_, kGuidPreservedKeyCycle, &cycleKey, kCycleDescription,
                                                       static_cast<ULONG>(std::size(kCycleDescription) - 1)));
 
@@ -164,6 +180,10 @@ STDMETHODIMP TextService::ActivateEx(ITfThreadMgr* threadMgr, TfClientId clientI
     }
     mode_ = mode;
     composer_ = Composer(optionsFor(mode_));
+
+    // Watch the focused document for caret moves out of our composition.
+    ComPtr<ITfDocumentMgr> focused;
+    if (SUCCEEDED(threadMgr_->GetFocus(&focused)) && focused) watchDocument(focused.Get());
 
     // Mode button in Windows' own input indicator (next to the clock).
     ComPtr<ITfLangBarItemMgr> langBar;
@@ -189,6 +209,7 @@ STDMETHODIMP TextService::Deactivate() {
     commitComposition();
     composition_.Reset();
     composer_.reset();
+    unwatchDocument();
 
     if (langBarButton_ != nullptr) {
         ComPtr<ITfLangBarItemMgr> langBar;
@@ -229,11 +250,63 @@ STDMETHODIMP TextService::Deactivate() {
 
 // --- Focus and composition lifetime ----------------------------------------------------
 
-STDMETHODIMP TextService::OnSetFocus(ITfDocumentMgr*, ITfDocumentMgr*) {
+STDMETHODIMP TextService::OnSetFocus(ITfDocumentMgr* focus, ITfDocumentMgr*) {
     // Never carry a half-typed syllable into another document.
     commitComposition();
     composition_.Reset();
     composer_.reset();
+    watchDocument(focus);
+    return S_OK;
+}
+
+void TextService::watchDocument(ITfDocumentMgr* documentMgr) noexcept {
+    unwatchDocument();
+    if (documentMgr == nullptr) return;
+    ComPtr<ITfContext> context;
+    if (FAILED(documentMgr->GetTop(&context)) || !context) return;
+    ComPtr<ITfSource> source;
+    if (SUCCEEDED(context.As(&source)) &&
+        SUCCEEDED(source->AdviseSink(__uuidof(ITfTextEditSink), static_cast<ITfTextEditSink*>(this),
+                                     &textEditSinkCookie_))) {
+        watchedContext_ = context;
+    }
+}
+
+void TextService::unwatchDocument() noexcept {
+    if (watchedContext_ && textEditSinkCookie_ != TF_INVALID_COOKIE) {
+        ComPtr<ITfSource> source;
+        if (SUCCEEDED(watchedContext_.As(&source))) source->UnadviseSink(textEditSinkCookie_);
+    }
+    textEditSinkCookie_ = TF_INVALID_COOKIE;
+    watchedContext_.Reset();
+}
+
+STDMETHODIMP TextService::OnEndEdit(ITfContext* context, TfEditCookie ecReadOnly, ITfEditRecord* record) {
+    if (!composition_ || context == nullptr || record == nullptr) return S_OK;
+    BOOL selectionChanged = FALSE;
+    if (FAILED(record->GetSelectionStatus(&selectionChanged)) || !selectionChanged) return S_OK;
+
+    TF_SELECTION selection{};
+    ULONG fetched = 0;
+    if (FAILED(context->GetSelection(ecReadOnly, TF_DEFAULT_SELECTION, 1, &selection, &fetched)) || fetched != 1) {
+        return S_OK;
+    }
+    ComPtr<ITfRange> selectionRange;
+    selectionRange.Attach(selection.range);
+    ComPtr<ITfRange> compositionRange;
+    if (FAILED(composition_->GetRange(&compositionRange))) return S_OK;
+
+    // Our own edits leave the caret at the end of the composition (inside). Anything that
+    // puts the caret or selection outside it means the user moved away.
+    LONG startOrder = 0;
+    LONG endOrder = 0;
+    const bool outside =
+        SUCCEEDED(compositionRange->CompareStart(ecReadOnly, selectionRange.Get(), TF_ANCHOR_START, &startOrder)) &&
+        SUCCEEDED(compositionRange->CompareEnd(ecReadOnly, selectionRange.Get(), TF_ANCHOR_END, &endOrder)) &&
+        (startOrder > 0 || endOrder < 0);
+    // The document is read-locked here, so the commit is queued as an asynchronous edit
+    // session (apply() falls back to that automatically).
+    if (outside) commitComposition();
     return S_OK;
 }
 
@@ -259,7 +332,7 @@ STDMETHODIMP TextService::OnTestKeyDown(ITfContext*, WPARAM wParam, LPARAM lPara
     if (!keyDown(VK_CONTROL) && !keyDown(VK_MENU)) {
         // Predict on a copy, so the engine itself is not changed here.
         Composer probe = composer_;
-        if (probe.pressKey(scanCode(lParam), keyDown(VK_SHIFT)).eaten) {
+        if (probe.pressKey(scanCode(wParam, lParam), shiftFor(wParam)).eaten) {
             *eaten = TRUE;
             return S_OK;
         }
@@ -288,7 +361,7 @@ EditResult TextService::process(WPARAM vk, LPARAM lParam) noexcept {
         result.eaten = false;
         return result;
     }
-    return composer_.pressKey(scanCode(lParam), keyDown(VK_SHIFT));
+    return composer_.pressKey(scanCode(vk, lParam), shiftFor(vk));
 }
 
 STDMETHODIMP TextService::OnKeyDown(ITfContext* context, WPARAM wParam, LPARAM lParam, BOOL* eaten) {

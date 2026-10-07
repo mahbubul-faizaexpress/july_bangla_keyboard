@@ -16,7 +16,10 @@ bool fontFamilyInstalled(const wchar_t* family) noexcept {
     if (dc == nullptr) return false;
     LOGFONTW query{};
     query.lfCharSet = DEFAULT_CHARSET;
-    lstrcpynW(query.lfFaceName, family, LF_FACESIZE);
+    if (lstrcpynW(query.lfFaceName, family, LF_FACESIZE) == nullptr) {
+        ReleaseDC(nullptr, dc);
+        return false;
+    }
     bool found = false;
     EnumFontFamiliesExW(dc, &query, onFontFamily, reinterpret_cast<LPARAM>(&found), 0);
     ReleaseDC(nullptr, dc);

@@ -69,7 +69,7 @@ Root: HKCU; Subkey: "Software\Microsoft\Windows\CurrentVersion\Run"; ValueType: 
 Root: HKCU; Subkey: "Software\JulyBangla"; ValueType: none; Flags: uninsdeletekey dontcreatekey
 
 [Icons]
-Name: "{autoprograms}\July Bangla Keyboard"; Filename: "{app}\JulyBangla.exe"; Comment: "Bangla (Bijoy) keyboard status bar and tray icon"
+Name: "{autoprograms}\July Bangla Keyboard"; Filename: "{app}\JulyBangla.exe"; Comment: "Bangla keyboard (Bijoy-compatible) status bar and tray icon"
 
 [Run]
 Filename: "powershell.exe"; Parameters: "-NoProfile -ExecutionPolicy Bypass -File ""{app}\Enable-Profile.ps1"""; Flags: runhidden runasoriginaluser waituntilterminated; Tasks: addkeyboard; StatusMsg: "Adding the keyboard to your keyboard list..."

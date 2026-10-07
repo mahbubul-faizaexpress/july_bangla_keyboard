@@ -46,10 +46,13 @@ private:
     HRESULT hr_;
 };
 
-void clsidKeyPath(wchar_t (&buffer)[128]) noexcept {
+// Key of our COM class. Returns false unless the full path including the CLSID was
+// formatted: an empty CLSID would turn the path into HKLM\SOFTWARE\Classes\CLSID itself,
+// and unregistration deletes that key's whole tree.
+bool clsidKeyPath(wchar_t (&buffer)[128]) noexcept {
     wchar_t clsid[64] = {};
-    StringFromGUID2(kClsidTextService, clsid, static_cast<int>(std::size(clsid)));
-    swprintf_s(buffer, L"SOFTWARE\\Classes\\CLSID\\%s", clsid);
+    if (StringFromGUID2(kClsidTextService, clsid, static_cast<int>(std::size(clsid))) != 39) return false;
+    return swprintf_s(buffer, L"SOFTWARE\\Classes\\CLSID\\%s", clsid) == 23 + 38;
 }
 
 // Full path of this DLL; 0 on failure (including truncation).
@@ -64,7 +67,7 @@ HRESULT registerComServer() noexcept {
     if (length == 0) return HRESULT_FROM_WIN32(ERROR_BAD_PATHNAME);
 
     wchar_t key[128] = {};
-    clsidKeyPath(key);
+    if (!clsidKeyPath(key)) return E_UNEXPECTED;
     LSTATUS status = RegSetKeyValueW(HKEY_LOCAL_MACHINE, key, nullptr, REG_SZ, kDisplayName, sizeof(kDisplayName));
     if (status != ERROR_SUCCESS) return HRESULT_FROM_WIN32(status);
 
@@ -80,7 +83,7 @@ HRESULT registerComServer() noexcept {
 
 HRESULT unregisterComServer() noexcept {
     wchar_t key[128] = {};
-    clsidKeyPath(key);
+    if (!clsidKeyPath(key)) return E_UNEXPECTED;  // never delete a shorter (shared) path
     const LSTATUS status = RegDeleteTreeW(HKEY_LOCAL_MACHINE, key);
     return (status == ERROR_SUCCESS || status == ERROR_FILE_NOT_FOUND) ? S_OK : HRESULT_FROM_WIN32(status);
 }

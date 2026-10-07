@@ -36,7 +36,7 @@ constexpr LONG kModeClassic = 2;
 
 struct Case {
     LONG mode;
-    const char* keys;  // letter labels; uppercase = Shift; '<' Backspace, newline Enter, ' ' Space
+    const char* keys;  // letters (uppercase = Shift); '<' Backspace, newline Enter, ' ' Space, '1' numpad 1, '^' caret to start
     const wchar_t* expected;
     const char* name;
 };
@@ -54,6 +54,8 @@ const Case kCases[] = {
     {kModeUnicode, "Ffdm", L"আমি", "অ + া = আ (আমি typed as Shift+F F D M)"},
     {kModeUnicode, "clM\n", L"দেশ", "দেশ (C L Shift+M) + Enter: final before app sees it"},
     {kModeUnicode, "jgN ", L"ক্ষ", "ক্ষ + Space: final before the app sees Space"},
+    {kModeUnicode, "1", L"১", "numpad 1 gives the Bengali digit"},
+    {kModeUnicode, "j^m", L"মক", "caret moved away: ক stays, ম goes to the new caret"},
     {kModeEnglish, "jfd", L"", "English mode passes keys through (not eaten)"},
 };
 
@@ -85,7 +87,7 @@ std::string hex(std::wstring_view text) {
 
 void setShift(bool down) {
     BYTE state[256] = {};
-    GetKeyboardState(state);
+    if (!GetKeyboardState(state)) return;
     state[VK_SHIFT] = state[VK_LSHIFT] = down ? 0x80 : 0;
     state[VK_CONTROL] = state[VK_LCONTROL] = state[VK_RCONTROL] = 0;
     state[VK_MENU] = state[VK_LMENU] = state[VK_RMENU] = 0;
@@ -141,6 +143,34 @@ LONG readMode(ITfThreadMgr* threadMgr) {
     return -1;
 }
 
+// The text service's input-mode button in Windows' input indicator, if present.
+ComPtr<ITfLangBarItemButton> findModeButton(ITfThreadMgr* threadMgr) {
+    ComPtr<ITfLangBarItemMgr> langBar;
+    ComPtr<IEnumTfLangBarItems> items;
+    if (FAILED(threadMgr->QueryInterface(IID_PPV_ARGS(&langBar))) || FAILED(langBar->EnumItems(&items))) return {};
+    ComPtr<ITfLangBarItem> item;
+    ULONG fetched = 0;
+    while (items->Next(1, &item, &fetched) == S_OK && fetched == 1) {
+        TF_LANGBARITEMINFO info{};
+        ComPtr<ITfLangBarItemButton> button;
+        if (SUCCEEDED(item->GetInfo(&info)) && info.clsidService == kClsidTextService &&
+            info.guidItem == GUID_LBI_INPUTMODE && SUCCEEDED(item.As(&button))) {
+            return button;
+        }
+        item.Reset();
+    }
+    return {};
+}
+
+std::wstring buttonText(ITfThreadMgr* threadMgr) {
+    ComPtr<ITfLangBarItemButton> button = findModeButton(threadMgr);
+    BSTR text = nullptr;
+    if (!button || FAILED(button->GetText(&text)) || text == nullptr) return L"(no button)";
+    std::wstring result(text);
+    SysFreeString(text);
+    return result;
+}
+
 int fail(const char* what, HRESULT hr) {
     std::printf("SETUP FAILED: %s (hr=0x%08lX)\n", what, static_cast<unsigned long>(hr));
     return 2;
@@ -174,9 +204,22 @@ int wmain(int argc, wchar_t** argv) {
                                 nullptr, GetModuleHandleW(nullptr), nullptr);
     if (frame == nullptr || edit == nullptr) return fail("create RichEdit", HRESULT_FROM_WIN32(GetLastError()));
     SendMessageW(edit, EM_SETEDITSTYLE, SES_USECTF, SES_USECTF);  // RichEdit talks to TSF
-    ShowWindow(frame, SW_SHOWNOACTIVATE);
+    // TSF only routes keys to text services for the foreground window, as for real typing.
+    // Windows may refuse to bring a window forward (foreground lock), e.g. when the user is
+    // working in another program; then the typing cases cannot run and are reported as
+    // SKIPPED instead of failing.
+    ShowWindow(frame, SW_SHOW);
+    SetForegroundWindow(frame);
     SetFocus(edit);
     pump();
+    const bool isForeground = GetForegroundWindow() == frame;
+    if (!isForeground) {
+        std::printf("SKIPPED: the test window could not become the foreground window (Windows foreground lock).\n"
+                    "         Click this terminal window and run july_tip_smoke again.\n");
+        DestroyWindow(frame);
+        CoUninitialize();
+        return 77;  // conventional "skipped" exit code
+    }
 
     ComPtr<ITfThreadMgr> threadMgr;
     hr = CoCreateInstance(CLSID_TF_ThreadMgr, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&threadMgr));
@@ -207,12 +250,37 @@ int wmain(int argc, wchar_t** argv) {
     hr = threadMgr.As(&keystrokes);
     if (FAILED(hr)) return fail("keystroke manager", hr);
 
+    const bool debug = argc > 1 && std::wstring_view(argv[1]) == L"--debug";  // per-key trace
+    if (debug) {
+        ComPtr<ITfDocumentMgr> focusDoc;
+        threadMgr->GetFocus(&focusDoc);
+        ComPtr<ITfContext> top;
+        if (focusDoc) focusDoc->GetTop(&top);
+        std::printf("TSF focus document: %s, top context: %s\n", focusDoc ? "yes" : "NONE", top ? "yes" : "NONE");
+        ComPtr<ITfKeystrokeMgr> ksm;
+        CLSID foreground{};
+        if (SUCCEEDED(threadMgr.As(&ksm)) && SUCCEEDED(ksm->GetForeground(&foreground))) {
+            wchar_t text[64] = {};
+            if (StringFromGUID2(foreground, text, 64) == 0) text[0] = L'?';
+            std::printf("foreground key-event sink: %ls%s\n", text, foreground == kClsidTextService ? " (ours)" : " (NOT ours)");
+        }
+        DWORD foregroundPid = 0;
+        GetWindowThreadProcessId(GetForegroundWindow(), &foregroundPid);
+        std::printf("foreground window belongs to pid %lu (this process: %lu)\n", foregroundPid, GetCurrentProcessId());
+        HMODULE richEdit = GetModuleHandleW(L"msftedit.dll");
+        wchar_t path[MAX_PATH] = {};
+        if (richEdit) GetModuleFileNameW(richEdit, path, MAX_PATH);
+        DWORD handle = 0;
+        const DWORD size = GetFileVersionInfoSizeW(path, &handle);
+        std::printf("msftedit.dll: %ls (version info %lu bytes)\n", path, size);
+    }
     const LONG originalMode = readMode(threadMgr.Get());
     int failures = 0;
     for (const Case& c : kCases) {
         SetWindowTextW(edit, L"");
         hr = setMode(threadMgr.Get(), clientId, c.mode);
         if (FAILED(hr)) return fail("set mode compartment", hr);
+        if (debug) std::printf("   case mode %ld, text service shows [%s]\n", c.mode, hex(buttonText(threadMgr.Get())).c_str());
 
         bool typingKeysEaten = true;   // Bijoy keys must be taken by the text service
         bool passThroughOk = true;     // Enter/Space must reach the app, after the commit
@@ -223,9 +291,22 @@ int wmain(int argc, wchar_t** argv) {
             const UINT vk = *k == '<'  ? VK_BACK
                             : *k == '\n' ? VK_RETURN
                             : *k == ' '  ? VK_SPACE
+                            : *k == '1'  ? VK_NUMPAD1
                                          : static_cast<UINT>(shift ? *k : *k - 'a' + 'A');
+            if (*k == '^') {
+                // Move the caret to the start of the text, as a mouse click would.
+                SendMessageW(edit, EM_SETSEL, 0, 0);
+                pump();
+                continue;
+            }
             std::wstring textBeforeApp;
             const bool eaten = sendKey(keystrokes.Get(), edit, vk, shift, &textBeforeApp);
+            if (debug) {
+                std::printf("      key vk=0x%02X scan=0x%02X shift=%d eaten=%d mode(compartment)=%ld focus-is-edit=%d "
+                            "hkl=%p\n",
+                            vk, MapVirtualKeyW(vk, MAPVK_VK_TO_VSC), shift, eaten, readMode(threadMgr.Get()),
+                            GetFocus() == edit, static_cast<void*>(GetKeyboardLayout(0)));
+            }
             anyEaten = anyEaten || eaten;
             if (passThrough) {
                 // The syllable must already be final when the application gets the key.
@@ -270,7 +351,7 @@ int wmain(int argc, wchar_t** argv) {
         struct LabelCase { LONG mode; const wchar_t* label; };
         const LabelCase labels[] = {{kModeEnglish, L"EN"},
                                     {kModeUnicode, L"বাংলা"},
-                                    {kModeClassic, L"বিজয়"}};
+                                    {kModeClassic, L"ক্লাসিক"}};  // ক্লাসিক
         for (const LabelCase& l : labels) {
             setMode(threadMgr.Get(), clientId, l.mode);
             BSTR text = nullptr;

@@ -44,7 +44,7 @@ STDMETHODIMP LangBarButton::GetInfo(TF_LANGBARITEMINFO* info) {
     info->guidItem = GUID_LBI_INPUTMODE;
     info->dwStyle = TF_LBI_STYLE_BTN_BUTTON | TF_LBI_STYLE_SHOWNINTRAY;
     info->ulSort = 0;
-    lstrcpynW(info->szDescription, L"July Bangla Keyboard input mode", TF_LBI_DESC_MAXLEN);
+    (void)lstrcpynW(info->szDescription, L"July Bangla Keyboard input mode", TF_LBI_DESC_MAXLEN);
     return S_OK;
 }
 

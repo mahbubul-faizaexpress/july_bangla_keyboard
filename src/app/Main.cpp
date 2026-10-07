@@ -156,7 +156,7 @@ void App::showMenu(POINT pt) noexcept {
     const InputMode mode = modeSync_.mode();
     AppendMenuW(menu, MF_STRING, kCmdEnglish, L"English\tCtrl+Alt+B");
     AppendMenuW(menu, MF_STRING, kCmdUnicode, L"বাংলা (Unicode)");
-    AppendMenuW(menu, MF_STRING, kCmdClassic, L"বিজয় (Classic / SutonnyMJ)");
+    AppendMenuW(menu, MF_STRING, kCmdClassic, L"ক্লাসিক (SutonnyMJ / ANSI)");
     const UINT checkedMode = mode == InputMode::Unicode ? kCmdUnicode : mode == InputMode::Classic ? kCmdClassic : kCmdEnglish;
     CheckMenuRadioItem(menu, kCmdEnglish, kCmdClassic, checkedMode, MF_BYCOMMAND);
     AppendMenuW(menu, MF_SEPARATOR, 0, nullptr);
@@ -217,7 +217,7 @@ void App::showDiagnostics() noexcept {
     swprintf_s(text,
                L"SutonnyMJ font: %s\n"
                L"ANSI code page: %u %s\n\n"
-               L"Classic (বিজয়) mode writes SutonnyMJ codes. Select the SutonnyMJ font in your "
+               L"Classic (ক্লাসিক) mode writes SutonnyMJ codes. Select the SutonnyMJ font in your "
                L"application to see Bangla.%s",
                d.sutonnyInstalled ? L"installed" : L"NOT installed (Classic text will look like English letters)",
                d.ansiCodePage, d.ansiCodePageOk ? L"(OK)" : L"(not 1252: Classic text will not round-trip in non-Unicode programs)",
@@ -230,8 +230,8 @@ void App::showAbout() noexcept {
     swprintf_s(text,
                L"জুলাই বাংলা কীবোর্ড  (July Bangla Keyboard) %hs\n\n"
                L"%s\n%s\n\n"
-               L"Engine %hs, layout %hs (Bijoy)\n"
-               L"Ctrl+Alt+B: English → বাংলা → বিজয়\n\n"
+               L"Engine %hs, layout %hs (Bijoy-compatible)\n"
+               L"Ctrl+Alt+B: English → বাংলা → ক্লাসিক\n\n"
                L"Privacy: works offline. No keystrokes, typed text or clipboard data are stored or sent.",
                kAppVersion, kSlogan, kDedication, kEngineVersion, kLayoutVersion);
     MessageBoxW(nullptr, text, L"July Bangla Keyboard", MB_OK | MB_ICONINFORMATION);
@@ -285,6 +285,21 @@ LRESULT App::handle(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept 
 int WINAPI wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE, _In_ PWSTR commandLine, _In_ int) {
     // Started by Windows at sign-in: no splash (it would interrupt the user every day).
     const bool autostart = commandLine != nullptr && wcsstr(commandLine, L"--autostart") != nullptr;
+
+    // Developer/QA option: show only the splash screen, then exit. Does not touch a
+    // running instance, the tray or any setting.
+    if (commandLine != nullptr && wcsstr(commandLine, L"--preview-splash") != nullptr) {
+        if (FAILED(CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED))) return 1;
+        july::app::Splash preview;
+        preview.show(instance, /*quitOnClose=*/true);
+        MSG msg;
+        while (GetMessageW(&msg, nullptr, 0, 0) > 0) {
+            TranslateMessage(&msg);
+            DispatchMessageW(&msg);
+        }
+        CoUninitialize();
+        return 0;
+    }
     HANDLE mutex = CreateMutexW(nullptr, TRUE, july::app::kMutexName);
     if (mutex == nullptr) return 1;
     if (GetLastError() == ERROR_ALREADY_EXISTS) {

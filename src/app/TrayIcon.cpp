@@ -28,7 +28,7 @@ bool TrayIcon::add(HWND owner, InputMode mode) noexcept {
     data.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP | NIF_SHOWTIP;
     data.uCallbackMessage = kCallbackMessage;
     data.hIcon = icon;
-    lstrcpynW(data.szTip, visualFor(mode).tooltip, ARRAYSIZE(data.szTip));
+    (void)lstrcpynW(data.szTip, visualFor(mode).tooltip, ARRAYSIZE(data.szTip));  // truncation is fine
     added_ = Shell_NotifyIconW(NIM_ADD, &data) != FALSE;
     if (added_) {
         data.uVersion = NOTIFYICON_VERSION_4;
@@ -46,7 +46,7 @@ void TrayIcon::update(InputMode mode) noexcept {
     NOTIFYICONDATAW data = baseData(owner_);
     data.uFlags = NIF_ICON | NIF_TIP | NIF_SHOWTIP;
     data.hIcon = icon;
-    lstrcpynW(data.szTip, visualFor(mode).tooltip, ARRAYSIZE(data.szTip));
+    (void)lstrcpynW(data.szTip, visualFor(mode).tooltip, ARRAYSIZE(data.szTip));  // truncation is fine
     Shell_NotifyIconW(NIM_MODIFY, &data);
     if (icon_ != nullptr) DestroyIcon(icon_);
     icon_ = icon;
