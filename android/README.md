@@ -6,8 +6,14 @@ give the same text on both platforms.
 
 - **Modes:** বাংলা (Unicode), ক্লাসিক (SutonnyMJ), English. Tap the mode key to cycle;
   long-press it to switch to another keyboard. Ctrl+Alt+B cycles on hardware keyboards.
-- **Layout:** the PC Bijoy key positions. Each key shows its Shift character in the
-  corner. The linker `g`, reph and pre-base kars type exactly as on Windows.
+- **Look:** like the iPhone keyboard. It has four rows, white letter keys with a soft
+  shadow on a grey tray, and grey function keys. A pressed letter shows an enlarged
+  preview, and Return names the field's action (যাও, খুঁজুন, পাঠান…) and turns blue.
+  Digits and signs are on the ১২৩ and #+= pages, and a space returns to the letters.
+  Light and dark themes follow the phone.
+- **Layout:** the PC Bijoy key positions. The middle row ends with ৎ/ঃ (the `\` key),
+  and ঁ (Bijoy Shift+7) sits beside m. Each key shows its Shift character in the corner.
+  The linker `g`, reph and pre-base kars type exactly as on Windows.
 - **Number, phone and password fields** always get plain Latin characters.
 - **Privacy:** no permissions at all, no network, nothing typed is stored. The only
   saved setting is the mode.

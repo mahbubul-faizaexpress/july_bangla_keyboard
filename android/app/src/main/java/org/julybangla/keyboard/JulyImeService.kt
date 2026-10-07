@@ -20,10 +20,11 @@ class JulyImeService : InputMethodService(), KeyboardView.Host {
 
     private enum class Mode { ENGLISH, UNICODE, CLASSIC }
     private enum class Shift { OFF, ONCE, LOCKED }
+    private enum class Page { LETTERS, SYMBOLS, MORE }
 
     private var mode = Mode.UNICODE
     private var shift = Shift.OFF
-    private var symbols = false
+    private var page = Page.LETTERS
     private var lastShiftTap = 0L
     // Number, phone and password fields always get plain Latin characters.
     private var latinOnly = false
@@ -58,10 +59,23 @@ class JulyImeService : InputMethodService(), KeyboardView.Host {
         super.onStartInputView(info, restarting)
         dropComposition()
         shift = Shift.OFF
-        symbols = isNumberField(info)
-        latinOnly = symbols || isPasswordField(info)
-        keyboard?.showPage(if (symbols) Pages.symbols else Pages.letters)
+        val numbers = isNumberField(info)
+        latinOnly = numbers || isPasswordField(info)
+        page = if (numbers) Page.SYMBOLS else Page.LETTERS
+        showPage()
     }
+
+    private fun showPage() {
+        keyboard?.showPage(
+            when (page) {
+                Page.LETTERS -> if (mode == Mode.ENGLISH || latinOnly) Pages.englishLetters else Pages.banglaLetters
+                Page.SYMBOLS -> Pages.symbols
+                Page.MORE -> Pages.moreSymbols
+            },
+        )
+    }
+
+    private val bangla get() = mode != Mode.ENGLISH && !latinOnly
 
     override fun onFinishInput() {
         endComposition()
@@ -85,7 +99,7 @@ class JulyImeService : InputMethodService(), KeyboardView.Host {
     // --- Keyboard host -----------------------------------------------------------------
 
     override fun label(key: Key): String = when (key.type) {
-        KeyType.CHAR -> charLabel(key, shiftOn())
+        KeyType.CHAR -> charLabel(key, key.forceShift || shiftOn())
         KeyType.TEXT -> key.text
         KeyType.SHIFT -> if (shift == Shift.LOCKED) "⇪" else "⇧"
         KeyType.DELETE -> "⌫"
@@ -95,26 +109,50 @@ class JulyImeService : InputMethodService(), KeyboardView.Host {
             Mode.CLASSIC -> "ক্লা"
         }
         KeyType.SYMBOLS -> when {
-            symbols && mode == Mode.ENGLISH -> "ABC"
-            symbols -> "কখগ"
-            mode == Mode.ENGLISH -> "?123"
-            else -> "?১২৩"
+            page != Page.LETTERS -> if (bangla) "কখগ" else "ABC"
+            else -> if (bangla) "১২৩" else "123"
         }
+        KeyType.MORE -> if (page == Page.SYMBOLS) "#+=" else if (bangla) "১২৩" else "123"
         KeyType.SPACE -> when (mode) {
-            Mode.ENGLISH -> "English"
+            Mode.ENGLISH -> "space"
             Mode.UNICODE -> "জুলাই বাংলা"
             Mode.CLASSIC -> "ক্লাসিক"
         }
-        KeyType.ENTER -> "↵"
+        KeyType.ENTER -> enterLabel()
+    }
+
+    // The Return key names the field's action, as on the iPhone.
+    private fun enterLabel(): String {
+        val words = when (enterAction()) {
+            EditorInfo.IME_ACTION_GO -> "যাও" to "go"
+            EditorInfo.IME_ACTION_SEARCH -> "খুঁজুন" to "search"
+            EditorInfo.IME_ACTION_SEND -> "পাঠান" to "send"
+            EditorInfo.IME_ACTION_NEXT -> "পরের" to "next"
+            EditorInfo.IME_ACTION_DONE -> "শেষ" to "done"
+            else -> "↵" to "return"
+        }
+        return if (mode == Mode.ENGLISH) words.second else words.first
+    }
+
+    /** The field's editor action, or IME_ACTION_NONE when Return should insert a new line. */
+    private fun enterAction(): Int {
+        val info = currentInputEditorInfo ?: return EditorInfo.IME_ACTION_NONE
+        if ((info.imeOptions and EditorInfo.IME_FLAG_NO_ENTER_ACTION) != 0) return EditorInfo.IME_ACTION_NONE
+        val action = info.imeOptions and EditorInfo.IME_MASK_ACTION
+        return if (action == EditorInfo.IME_ACTION_UNSPECIFIED) EditorInfo.IME_ACTION_NONE else action
     }
 
     override fun hint(key: Key): String? {
-        if (key.type != KeyType.CHAR || mode == Mode.ENGLISH || latinOnly || symbols) return null
+        if (key.type != KeyType.CHAR || key.forceShift || !bangla || page != Page.LETTERS) return null
         val other = charLabel(key, !shiftOn())
         return other.takeIf { it != charLabel(key, shiftOn()) }
     }
 
-    override fun isActive(key: Key) = key.type == KeyType.SHIFT && shift != Shift.OFF
+    override fun isActive(key: Key) = when (key.type) {
+        KeyType.SHIFT -> shift != Shift.OFF
+        KeyType.ENTER -> enterAction() != EditorInfo.IME_ACTION_NONE
+        else -> false
+    }
 
     override fun modeColor(): Int = getColor(
         when (mode) {
@@ -134,6 +172,11 @@ class JulyImeService : InputMethodService(), KeyboardView.Host {
             KeyType.SPACE -> {
                 endComposition()
                 currentInputConnection?.commitText(" ", 1)
+                // As on the iPhone: after a space the letters come back.
+                if (page != Page.LETTERS && !latinOnly) {
+                    page = Page.LETTERS
+                    showPage()
+                }
             }
             KeyType.ENTER -> pressEnter()
             KeyType.DELETE -> pressDelete()
@@ -148,8 +191,12 @@ class JulyImeService : InputMethodService(), KeyboardView.Host {
             }
             KeyType.MODE -> setMode(nextMode())
             KeyType.SYMBOLS -> {
-                symbols = !symbols
-                keyboard?.showPage(if (symbols) Pages.symbols else Pages.letters)
+                page = if (page == Page.LETTERS) Page.SYMBOLS else Page.LETTERS
+                showPage()
+            }
+            KeyType.MORE -> {
+                page = if (page == Page.SYMBOLS) Page.MORE else Page.SYMBOLS
+                showPage()
             }
         }
         keyboard?.refresh()
@@ -165,8 +212,8 @@ class JulyImeService : InputMethodService(), KeyboardView.Host {
     // --- Typing ------------------------------------------------------------------------
 
     private fun typeChar(key: Key) {
-        val shifted = shiftOn()
-        if (shift == Shift.ONCE) shift = Shift.OFF
+        val shifted = key.forceShift || shiftOn()
+        if (shift == Shift.ONCE && !key.forceShift) shift = Shift.OFF
         val latin = if (shifted) ScanCodes.shifted(key.latin) else key.latin
         if (mode == Mode.ENGLISH || latinOnly || key.scan == 0) {
             endComposition()
@@ -194,11 +241,8 @@ class JulyImeService : InputMethodService(), KeyboardView.Host {
 
     private fun pressEnter() {
         endComposition()
-        val info = currentInputEditorInfo
-        val action = info?.imeOptions?.and(EditorInfo.IME_MASK_ACTION) ?: EditorInfo.IME_ACTION_NONE
-        val noAction = info == null || (info.imeOptions and EditorInfo.IME_FLAG_NO_ENTER_ACTION) != 0 ||
-            action == EditorInfo.IME_ACTION_NONE || action == EditorInfo.IME_ACTION_UNSPECIFIED
-        if (noAction) sendKeyChar('\n') else currentInputConnection?.performEditorAction(action)
+        val action = enterAction()
+        if (action == EditorInfo.IME_ACTION_NONE) sendKeyChar('\n') else currentInputConnection?.performEditorAction(action)
     }
 
     /** Moves an engine result into the editor (see [EditResult]). */
@@ -278,7 +322,7 @@ class JulyImeService : InputMethodService(), KeyboardView.Host {
         endComposition()
         mode = newMode
         getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putString(KEY_MODE, mode.name).apply()
-        keyboard?.refresh()
+        showPage()
     }
 
     private fun shiftOn() = shift != Shift.OFF

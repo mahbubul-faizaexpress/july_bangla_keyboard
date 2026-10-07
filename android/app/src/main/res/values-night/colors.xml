@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="kb_background">#151918</color>
-    <color name="kb_key">#2C3331</color>
-    <color name="kb_key_special">#1F2523</color>
-    <color name="kb_key_pressed">#46504D</color>
-    <color name="kb_text">#EEF2F0</color>
-    <color name="kb_hint">#98A39F</color>
+    <color name="kb_background">#2B2B2D</color>
+    <color name="kb_key">#6B6B6E</color>
+    <color name="kb_key_special">#47474A</color>
+    <color name="kb_key_pressed">#47474A</color>
+    <color name="kb_key_shadow">#141415</color>
+    <color name="kb_text">#FFFFFF</color>
+    <color name="kb_hint">#B9B9BE</color>
+    <color name="kb_preview">#6B6B6E</color>
 </resources>

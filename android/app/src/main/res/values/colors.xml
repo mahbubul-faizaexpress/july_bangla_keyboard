@@ -9,10 +9,13 @@
     <color name="splash_background">#1A342C</color>
     <color name="splash_text">#FFF4E2</color>
     <color name="splash_soft">#B8C4BE</color>
-    <color name="kb_background">#E8EBEA</color>
+    <!-- Keyboard, in the style of the iPhone keyboard. -->
+    <color name="kb_background">#D1D4DA</color>
     <color name="kb_key">#FFFFFF</color>
-    <color name="kb_key_special">#C9D1CE</color>
-    <color name="kb_key_pressed">#B3BDB9</color>
-    <color name="kb_text">#1B1F1E</color>
-    <color name="kb_hint">#6B7572</color>
+    <color name="kb_key_special">#ABB0BA</color>
+    <color name="kb_key_pressed">#ABB0BA</color>
+    <color name="kb_key_shadow">#898A8D</color>
+    <color name="kb_text">#000000</color>
+    <color name="kb_hint">#8A8E96</color>
+    <color name="kb_preview">#FFFFFF</color>
 </resources>

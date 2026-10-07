@@ -31,10 +31,20 @@ class KeysTest {
     }
 
     @Test
-    fun everyLetterPageRowIsTenUnitsWide() {
-        for (row in Pages.letters + Pages.symbols) {
-            assertEquals(10f, row.sumOf { it.width.toDouble() }.toFloat(), 0.001f)
+    fun pagesFitTenUnits() {
+        // Every row is ten units wide, except the iPhone-style centred middle row (a-l).
+        for (page in listOf(Pages.banglaLetters, Pages.symbols, Pages.moreSymbols)) {
+            for (row in page) assertEquals(10f, row.sumOf { it.width.toDouble() }.toFloat(), 0.001f)
         }
+        val english = Pages.englishLetters.map { row -> row.sumOf { it.width.toDouble() }.toFloat() }
+        assertEquals(listOf(10f, 9f, 10f, 10f), english)
+    }
+
+    @Test
+    fun banglaPageHasEveryBijoyLetterKey() {
+        val keys = Pages.banglaLetters.flatten().filter { it.type == KeyType.CHAR }
+        for (c in "qwertyuiopasdfghjkl\\zxcvbnm") assertTrue(keys.any { it.latin == c && !it.forceShift })
+        assertTrue(keys.any { it.latin == '7' && it.forceShift }) // ঁ
     }
 
     @Test

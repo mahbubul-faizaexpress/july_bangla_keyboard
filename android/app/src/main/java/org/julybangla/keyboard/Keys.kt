@@ -48,40 +48,66 @@ internal object ScanCodes {
     fun shifted(c: Char): Char = PLAIN.indexOf(c).let { if (it >= 0) SHIFTED[it] else c.uppercaseChar() }
 }
 
-enum class KeyType { CHAR, TEXT, SHIFT, DELETE, MODE, SYMBOLS, SPACE, ENTER }
+enum class KeyType { CHAR, TEXT, SHIFT, DELETE, MODE, SYMBOLS, MORE, SPACE, ENTER }
 
-/** One on-screen key. [width] is in key units; each row is 10 units wide. */
-class Key internal constructor(val type: KeyType, val latin: Char = ' ', val text: String = "", val width: Float = 1f) {
+/**
+ * One on-screen key. [width] is in key units; each row is 10 units wide. A CHAR key with
+ * [forceShift] always types its Shift character (the ঁ key, Bijoy Shift+7).
+ */
+class Key internal constructor(
+    val type: KeyType,
+    val latin: Char = ' ',
+    val text: String = "",
+    val width: Float = 1f,
+    val forceShift: Boolean = false,
+) {
     val scan: Int = if (type == KeyType.CHAR) ScanCodes.forChar(latin) else 0
 }
 
-/** On-screen pages. The letter page follows the PC Bijoy key positions. */
+/**
+ * On-screen pages, laid out like the iPhone keyboard: four rows, digits and signs on the
+ * "123" and "#+=" pages. The Bangla letter page keeps every Bijoy letter key in its PC
+ * position; ৎ/ঃ (the \ key) ends the middle row and ঁ (Shift+7) sits beside m.
+ */
 internal object Pages {
     private fun chars(row: String) = row.map { Key(KeyType.CHAR, latin = it) }
-    private fun texts(row: String) = row.split(' ').map { Key(KeyType.TEXT, text = it) }
+    private fun texts(row: String, width: Float = 1f) = row.split(' ').map { Key(KeyType.TEXT, text = it, width = width) }
 
     private val bottomRow = listOf(
-        Key(KeyType.SYMBOLS, width = 1.5f),
-        Key(KeyType.MODE),
-        Key(KeyType.CHAR, latin = ','),
-        Key(KeyType.SPACE, width = 4f),
-        Key(KeyType.CHAR, latin = '.'),
-        Key(KeyType.ENTER, width = 1.5f),
+        Key(KeyType.SYMBOLS, width = 1.25f),
+        Key(KeyType.MODE, width = 1.25f),
+        Key(KeyType.SPACE, width = 5f),
+        Key(KeyType.ENTER, width = 2.5f),
     )
 
-    val letters: List<List<Key>> = listOf(
-        chars("1234567890"),
+    val englishLetters: List<List<Key>> = listOf(
         chars("qwertyuiop"),
-        chars("asdfghjkl\\"),
+        chars("asdfghjkl"),
         listOf(Key(KeyType.SHIFT, width = 1.5f)) + chars("zxcvbnm") + Key(KeyType.DELETE, width = 1.5f),
         bottomRow,
     )
 
+    val banglaLetters: List<List<Key>> = listOf(
+        chars("qwertyuiop"),
+        chars("asdfghjkl\\"),
+        listOf(Key(KeyType.SHIFT, width = 1f)) + chars("zxcvbnm") +
+            Key(KeyType.CHAR, latin = '7', forceShift = true) + Key(KeyType.DELETE, width = 1f),
+        bottomRow,
+    )
+
+    private val punctuationRow = texts(". , ? ! ' ।", width = 7f / 6f)
+
     val symbols: List<List<Key>> = listOf(
         chars("1234567890"),
-        texts("@ # ৳ _ & - + ( ) /"),
-        texts("* \" ' : ; ! ? । = %"),
-        texts("[ ] { } < > \\ |") + Key(KeyType.DELETE, width = 2f),
+        texts("- / : ; ( ) ৳ & @ \""),
+        listOf(Key(KeyType.MORE, width = 1.5f)) + punctuationRow + Key(KeyType.DELETE, width = 1.5f),
+        bottomRow,
+    )
+
+    val moreSymbols: List<List<Key>> = listOf(
+        texts("[ ] { } # % ^ * + ="),
+        texts("_ \\ | ~ < > $ ` ‘ ’"),
+        listOf(Key(KeyType.MORE, width = 1.5f)) + punctuationRow + Key(KeyType.DELETE, width = 1.5f),
         bottomRow,
     )
 }
