@@ -1,5 +1,12 @@
 # SutonnyMJ (Bijoy Classic / ANSI) glyph table: source of truth for Classic output.
 #
+# This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
+# If a copy of the MPL was not distributed with this file, You can obtain one at
+# https://mozilla.org/MPL/2.0/.
+# The mappings are derived from the Unicode->Bijoy table in converter.py of
+# bijoy2unicode (https://github.com/Mad-FOX/bijoy2unicode), licensed under MPL-2.0.
+# See THIRD_PARTY_NOTICES.md.
+#
 # Grammar (one row per line; '#' starts a comment):
 #   <code point> [<code point>...]  ->  <byte> [<byte>...]  <source>
 #
