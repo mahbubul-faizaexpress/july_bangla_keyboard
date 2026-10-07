@@ -27,7 +27,7 @@ icon and Windows' own input indicator.
 
 ## Status
 
-Version 0.2.0 (preview). What works:
+Version 0.3.0 (preview). What works:
 
 - Typing in Unicode and Classic modes, verified end to end through TSF.
 - The mode switch, status bar, tray icon and splash screen.
@@ -58,6 +58,8 @@ powershell -ExecutionPolicy Bypass -File tools\Build-Installer.ps1
 - [Performance](docs/PERFORMANCE.md)
 - [Security and privacy](docs/SECURITY.md)
 - [Roadmap](docs/ROADMAP.md)
+- [Release process and production gates](docs/RELEASE.md)
+- [সমস্যা ও সমাধান (Troubleshooting)](docs/TROUBLESHOOTING.md)
 - [Third-party notices](THIRD_PARTY_NOTICES.md)
 
 ## License
