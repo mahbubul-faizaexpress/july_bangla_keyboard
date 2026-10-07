@@ -25,6 +25,8 @@ class KeyboardView internal constructor(context: Context, private val host: Host
         fun hint(key: Key): String?
         /** Highlighted keys: Shift while active. */
         fun isActive(key: Key): Boolean
+        /** Colour of the mode key label: blue for বাংলা, red for ক্লাসিক, grey for English. */
+        fun modeColor(): Int
         fun onKey(key: Key)
         /** Returns true if the long press was used (the key is then not sent on release). */
         fun onLongPress(key: Key): Boolean
@@ -123,17 +125,17 @@ class KeyboardView internal constructor(context: Context, private val host: Host
             val pressed = (0 until held.size()).any { held.valueAt(it) === cap }
             keyPaint.color = when {
                 pressed -> color(R.color.kb_key_pressed)
-                key.type == KeyType.ENTER -> color(R.color.july_green)
-                host.isActive(key) -> color(R.color.july_green)
+                key.type == KeyType.ENTER -> color(R.color.july_blue)
+                host.isActive(key) -> color(R.color.july_blue)
                 key.type == KeyType.CHAR || key.type == KeyType.TEXT || key.type == KeyType.SPACE -> color(R.color.kb_key)
                 else -> color(R.color.kb_key_special)
             }
             canvas.drawRoundRect(cap.rect, corner, corner, keyPaint)
 
-            val onGreen = !pressed && (key.type == KeyType.ENTER || host.isActive(key))
+            val onAccent = !pressed && (key.type == KeyType.ENTER || host.isActive(key))
             labelPaint.color = when {
-                onGreen -> 0xFFFFFFFF.toInt()
-                key.type == KeyType.MODE -> color(R.color.july_red)
+                onAccent -> 0xFFFFFFFF.toInt()
+                key.type == KeyType.MODE -> host.modeColor()
                 else -> color(R.color.kb_text)
             }
             val label = host.label(key)

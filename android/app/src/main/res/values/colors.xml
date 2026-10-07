@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- July identity: Bangladesh flag green and red. -->
-    <color name="july_green">#006A4E</color>
+    <!-- Brand: the logo blue for the interface; July red for the slogan and Classic mode. -->
+    <color name="july_blue">#2563EB</color>
     <color name="july_red">#F42A41</color>
     <!-- Logo tile background. -->
     <color name="july_navy">#1B1D4E</color>

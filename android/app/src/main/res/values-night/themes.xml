@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <style name="Theme.July" parent="android:Theme.Material.NoActionBar">
-        <item name="android:colorPrimary">@color/july_green</item>
-        <item name="android:colorAccent">@color/july_red</item>
+        <item name="android:colorPrimary">@color/july_blue</item>
+        <item name="android:colorAccent">@color/july_blue</item>
     </style>
 </resources>

@@ -8,7 +8,7 @@ namespace {
 const ModeVisual kVisuals[] = {
     {L"EN", L"EN", L"July Bangla Keyboard — English", RGB(0x55, 0x5F, 0x6D)},
     {L"বাংলা", L"বা",                          // বাংলা / বা
-     L"July Bangla Keyboard — বাংলা (Unicode)", RGB(0x1B, 0x7F, 0x3B)},
+     L"July Bangla Keyboard — বাংলা (Unicode)", RGB(0x25, 0x63, 0xEB)},
     // Classic output is SutonnyMJ / Bijoy-compatible; the product does not use the
     // registered "Bijoy" name for its own mode.
     {L"ক্লাসিক", L"ক",                          // ক্লাসিক / ক

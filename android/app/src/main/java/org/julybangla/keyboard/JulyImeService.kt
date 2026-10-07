@@ -116,6 +116,14 @@ class JulyImeService : InputMethodService(), KeyboardView.Host {
 
     override fun isActive(key: Key) = key.type == KeyType.SHIFT && shift != Shift.OFF
 
+    override fun modeColor(): Int = getColor(
+        when (mode) {
+            Mode.ENGLISH -> R.color.kb_hint
+            Mode.UNICODE -> R.color.july_blue
+            Mode.CLASSIC -> R.color.july_red
+        },
+    )
+
     override fun onKey(key: Key) {
         when (key.type) {
             KeyType.CHAR -> typeChar(key)
