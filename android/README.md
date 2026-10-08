@@ -61,10 +61,9 @@ gradlew bundleRelease                       # App Bundle for Google Play (sign b
 
 ## Not done yet
 
-- Long-press alternatives, key preview popup, sound and vibration settings, themes.
+- Long-press alternatives, sound and vibration settings, themes.
 - Accessibility (TalkBack) for the on-screen keys.
 - Release signing and the Play Store listing.
-- The final launcher icon (the July logo) to replace the placeholder.
 
 ## Release signing
 
