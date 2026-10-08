@@ -117,5 +117,16 @@ $t.Dispose()
 New-Item -ItemType Directory -Force (Join-Path $androidRes 'drawable-nodpi') | Out-Null
 Copy-Item (Join-Path $root 'resources\splash.jpg') (Join-Path $androidRes 'drawable-nodpi\july_splash.jpg')
 
+# --- Website ----------------------------------------------------------------------------
+$web = Join-Path $root 'website\assets'
+New-Item -ItemType Directory -Force $web | Out-Null
+$t = Get-Tile 256
+$t.Save((Join-Path $web 'logo.png'), [System.Drawing.Imaging.ImageFormat]::Png)
+$t.Dispose()
+$t = Get-Tile 64
+$t.Save((Join-Path $web 'favicon.png'), [System.Drawing.Imaging.ImageFormat]::Png)
+$t.Dispose()
+Copy-Item (Join-Path $root 'resources\splash.jpg') (Join-Path $web 'july36.jpg')
+
 $art.Dispose()
 Write-Host 'Icons written.'
