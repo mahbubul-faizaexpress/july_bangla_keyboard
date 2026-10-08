@@ -1,0 +1,17 @@
+name: নতুন ধারণা / Feature request
+description: কী যোগ হলে ভালো হয় / Suggest an improvement
+labels: [enhancement]
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: ধারণা / Idea
+      description: কী চান, আর কেন দরকার
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: প্ল্যাটফর্ম / Platform
+      multiple: true
+      options: [Windows, Android, Linux, macOS, Website]

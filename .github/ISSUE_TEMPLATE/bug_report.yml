@@ -1,0 +1,45 @@
+name: সমস্যা জানান / Bug report
+description: কোনো কিছু ঠিকমতো কাজ করছে না / Something does not work
+labels: [bug]
+body:
+  - type: dropdown
+    id: platform
+    attributes:
+      label: প্ল্যাটফর্ম / Platform
+      options: [Windows, Android]
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: সংস্করণ / Version
+      description: কীবোর্ডের সংস্করণ, আর Windows বা Android-এর সংস্করণ (যেমন 0.3.0, Windows 11 23H2)
+    validations:
+      required: true
+  - type: dropdown
+    id: mode
+    attributes:
+      label: মোড / Mode
+      options: [বাংলা (Unicode), ক্লাসিক (SutonnyMJ), English]
+  - type: input
+    id: app
+    attributes:
+      label: কোন অ্যাপে / App
+      description: যেমন Word, Chrome, WhatsApp
+  - type: textarea
+    id: keys
+    attributes:
+      label: কোন কী চেপেছেন / Keys pressed
+      description: "ইংরেজি কী-গুলো ফাঁকা দিয়ে লিখুন, বড় হাতের অক্ষর = Shift। যেমন: j m A"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: কী আশা করেছিলেন, কী এসেছে / Expected and actual
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: অন্য তথ্য বা স্ক্রিনশট / Anything else

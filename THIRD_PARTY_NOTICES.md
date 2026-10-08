@@ -34,3 +34,14 @@ and in the About box.
 - No font files are included.
 - Unicode output uses fonts that ship with Windows (for example Nirmala UI).
 - Classic output needs the SutonnyMJ font, which the user must obtain separately.
+
+## Website font
+
+The website (`website/assets/fonts/`) self-hosts **Hind Siliguri** by Indian Type
+Foundry, licensed under the SIL Open Font License 1.1
+(<https://openfontlicense.org>). Only the Bengali and Latin subsets are included.
+
+## Logo
+
+`resources/logo.jpg` and the icons generated from it (`tools/Make-Icons.ps1`) were
+supplied by the project owner.

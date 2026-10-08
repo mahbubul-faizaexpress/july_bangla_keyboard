@@ -36,8 +36,35 @@ fun hostCmake(): String {
     return "cmake"
 }
 
+// Release signing: a properties file (storeFile, storePassword, keyAlias, keyPassword)
+// kept OUTSIDE the repository, named by -Pjuly.signing, env JULY_SIGNING or july.signing in
+// local.properties. Without it the release APK is built unsigned. See android/README.md.
+fun signingProperties(): Properties? {
+    val local = rootProject.file("local.properties").takeIf { it.isFile }
+        ?.let { f -> Properties().apply { f.inputStream().use { load(it) } } }
+    val path = providers.gradleProperty("july.signing").orNull
+        ?: providers.environmentVariable("JULY_SIGNING").orNull
+        ?: local?.getProperty("july.signing")
+        ?: return null
+    val file = File(path)
+    if (!file.isFile) return null
+    return Properties().apply { file.inputStream().use { load(it) } }
+}
+
 android {
     namespace = "org.julybangla.keyboard"
+
+    val signing = signingProperties()
+    signingConfigs {
+        if (signing != null) {
+            create("release") {
+                storeFile = File(signing.getProperty("storeFile"))
+                storePassword = signing.getProperty("storePassword")
+                keyAlias = signing.getProperty("keyAlias")
+                keyPassword = signing.getProperty("keyPassword")
+            }
+        }
+    }
     compileSdk = 36
     ndkVersion = "28.2.13676358"
 
@@ -68,6 +95,7 @@ android {
 
     buildTypes {
         release {
+            signingConfigs.findByName("release")?.let { signingConfig = it }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")

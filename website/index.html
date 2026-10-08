@@ -3,219 +3,231 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>জুলাই বাংলা কীবোর্ড</title>
-  <meta name="description" content="বিজয় লেআউটে বাংলা লেখার বিনামূল্যের, ওপেন সোর্স কীবোর্ড — Windows ও Android-এর জন্য। ইউনিকোড ও ক্লাসিক (SutonnyMJ) মোড। কোনো ইন্টারনেট বা তথ্য সংগ্রহ নেই।">
-  <meta name="theme-color" content="#1B1D4E">
-  <meta property="og:title" content="জুলাই বাংলা কীবোর্ড">
-  <meta property="og:description" content="জুলাইয়ের অনুভূতি স্মরণ হোক, বাংলা লেখার মাধ্যমে।">
+  <title>জুলাই বাংলা কীবোর্ড — বিজয় লেআউটে বাংলা লিখুন</title>
+  <meta name="description" content="বিজয় লেআউটে বাংলা লেখার বিনামূল্যের, ওপেন সোর্স কীবোর্ড — Windows ও Android-এর জন্য। ইউনিকোড ও ক্লাসিক মোড, কোনো তথ্য সংগ্রহ নেই।">
+  <meta name="theme-color" content="#1b1d4e">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="জুলাই বাংলা কীবোর্ড">
+  <meta property="og:title" content="জুলাই বাংলা কীবোর্ড — বিজয় লেআউটে বাংলা লিখুন">
+  <meta property="og:description" content="বিজয় লেআউটে বাংলা লেখার বিনামূল্যের, ওপেন সোর্স কীবোর্ড — Windows ও Android-এর জন্য। ইউনিকোড ও ক্লাসিক মোড, কোনো তথ্য সংগ্রহ নেই।">
   <meta property="og:image" content="assets/july36.jpg">
   <link rel="icon" href="assets/favicon.png" type="image/png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Noto+Serif+Bengali:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="apple-touch-icon" href="assets/logo.png">
+  <link rel="preload" href="assets/fonts/hind-siliguri-400-bengali.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
+<a class="skip" href="#main">মূল অংশে যান</a>
 
 <header class="topbar">
   <div class="wrap topbar-inner">
-    <a class="brand" href="#top">
-      <img src="assets/logo.png" alt="" width="36" height="36">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="" width="34" height="34">
       <span>জুলাই বাংলা কীবোর্ড</span>
     </a>
-    <nav class="nav">
-      <a href="#features">বৈশিষ্ট্য</a>
-      <a href="#layout">লেআউট</a>
-      <a href="#download">ডাউনলোড</a>
-      <a href="#faq">প্রশ্নোত্তর</a>
-      <a class="nav-gh" href="https://github.com/mahbubul-faizaexpress/july_bangla_keyboard">GitHub</a>
+    <button class="menu-btn" type="button" aria-controls="nav" aria-expanded="false" aria-label="মেনু">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <nav class="nav" id="nav" aria-label="প্রধান">
+      <a href="guide.html">নির্দেশিকা</a>
+      <a href="about.html">আমাদের কথা</a>
+      <a href="https://github.com/mahbubul-faizaexpress/july_bangla_keyboard">GitHub</a>
+      <a class="btn btn-primary" href="download.html">ডাউনলোড</a>
     </nav>
   </div>
 </header>
 
-<main id="top">
-
-  <!-- Hero -->
+<main id="main">
   <section class="hero">
     <div class="wrap hero-inner">
-      <div class="hero-text">
-        <p class="eyebrow">বিনামূল্যে · ওপেন সোর্স · Windows ও Android</p>
-        <h1>বিজয় লেআউটে বাংলা লিখুন,<br>যেকোনো অ্যাপে।</h1>
-        <p class="lead">পরিচিত বিজয় কী-বিন্যাসে ইউনিকোড বাংলা আর ক্লাসিক (SutonnyMJ) লেখা — Word, Chrome, Facebook, সব জায়গায়। কোনো ইন্টারনেট লাগে না, আপনার লেখা কোথাও যায় না।</p>
-        <div class="cta">
-          <a class="btn btn-primary" href="#download">ডাউনলোড করুন</a>
-          <a class="btn btn-ghost" href="#layout">লেআউট দেখুন</a>
+      <div>
+        <span class="pill"><b>নতুন</b> সংস্করণ ০.৩.০ · প্রিভিউ</span>
+        <h1>বিজয়ের মতো লিখুন,<br><em>যেকোনো জায়গায়।</em></h1>
+        <p class="lead">পরিচিত বিজয় কী-বিন্যাসে ইউনিকোড ও ক্লাসিক বাংলা — কম্পিউটারে আর মোবাইলে, বিনামূল্যে।</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary btn-lg" href="download.html" data-smart-download>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11m0 0-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>
+            <span class="btn-stack"><span data-title>ডাউনলোড করুন</span><span class="btn-sub" data-sub>Windows · Android</span></span>
+          </a>
+          <a class="other-link" href="download.html">অন্য ডিভাইসের জন্য →</a>
         </div>
-        <p class="version">সংস্করণ ০.৩.০ · প্রিভিউ</p>
+        <ul class="trust">
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"/></svg>বিনামূল্যে</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"/></svg>ইন্টারনেট লাগে না</li>
+          <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7"/></svg>ওপেন সোর্স</li>
+        </ul>
       </div>
-      <div class="hero-art">
-        <img src="assets/logo.png" alt="জুলাই বাংলা কীবোর্ডের লোগো" width="256" height="256">
+
+      <div class="demo" aria-hidden="true">
+        <div class="demo-window">
+          <div class="demo-bar"><i></i><i></i><i></i><span>বিজয় কী → বাংলা লেখা</span></div>
+          <div class="demo-text" id="demo-text"><span class="typed"></span><span class="caret"></span></div>
+          <div class="demo-keys" id="demo-keys"></div>
+        </div>
+        <div class="mode-chip">
+          <img src="assets/logo.png" alt="">
+          <span>বাংলা<small>Ctrl+Alt+B</small></span>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Remembrance -->
-  <section class="memory">
-    <div class="wrap memory-inner">
-      <figure class="memory-art">
-        <img src="assets/july36.jpg" alt="জুলাই ৩৬" loading="lazy" width="1024" height="576">
-      </figure>
-      <div class="memory-text">
-        <div class="ribbon" aria-hidden="true"><span></span><span></span></div>
-        <p class="slogan">জুলাইয়ের অনুভূতি স্মরণ হোক,<br>বাংলা লেখার মাধ্যমে।</p>
-        <p class="dedication">২০২৪ সালের জুলাইয়ের ছাত্র-জনতার গণঅভ্যুত্থানের স্মরণে।</p>
-        <p>এই কীবোর্ডের নাম সেই দিনগুলোর স্মরণে রাখা। প্রতিটি বাংলা অক্ষর লেখার সাথে আমরা মনে রাখি — মাতৃভাষায় কথা বলা আর লেখার অধিকার কত মূল্যবান।</p>
-      </div>
+  <section class="stats" aria-label="এক নজরে">
+    <div class="wrap stats-inner">
+      <div class="stat"><b>৭৯/৭৯</b><span>বিজয় কী যাচাই করা</span></div>
+      <div class="stat"><b>২২২</b><span>ক্লাসিক অক্ষর যাচাই করা</span></div>
+      <div class="stat"><b>০</b><span>তথ্য সংগ্রহ</span></div>
+      <div class="stat"><b>&lt;১ MB</b><span>Android অ্যাপ</span></div>
     </div>
   </section>
 
-  <!-- Features -->
-  <section id="features" class="section">
+  <section class="section" id="features">
     <div class="wrap">
-      <h2>যা যা পাবেন</h2>
-      <div class="cards">
-        <article class="card">
-          <div class="card-icon" aria-hidden="true">ক</div>
+      <div class="section-head">
+        <span class="eyebrow">কেন জুলাই বাংলা</span>
+        <h2>যা দরকার, ঠিক ততটুকু।</h2>
+      </div>
+      <div class="features">
+        <article class="feature">
+          <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="19" height="12" rx="2.5"/><path d="M6.5 10h.01M10 10h.01M13.5 10h.01M17 10h.01M7.5 14h9"/></svg></div>
           <h3>আসল বিজয় লেআউট</h3>
-          <p>প্রতিটি কী বিজয় চার্টের সাথে মিলিয়ে যাচাই করা। কার আগে, রেফ পরে, <kbd>g</kbd> দিয়ে যুক্তবর্ণ — যেভাবে অভ্যস্ত, ঠিক সেভাবেই।</p>
+          <p>প্রতিটি কী বিজয় চার্টের সাথে মিলিয়ে যাচাই করা।</p>
         </article>
-        <article class="card">
-          <div class="card-icon" aria-hidden="true">অ</div>
+        <article class="feature">
+          <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h11M4 7l3-3M4 7l3 3M20 17H9m11 0-3-3m3 3-3 3"/></svg></div>
           <h3>ইউনিকোড ও ক্লাসিক</h3>
-          <p>ইউনিকোড মোডে যেকোনো বাংলা ফন্টে লেখা। ক্লাসিক মোডে SutonnyMJ-এর মতো পুরনো ANSI ফন্টের জন্য লেখা — পুরনো দলিল আর ছাপার কাজে।</p>
+          <p>আধুনিক ইউনিকোড, আর SutonnyMJ-এর জন্য ক্লাসিক।</p>
         </article>
-        <article class="card">
-          <div class="card-icon" aria-hidden="true">⌨</div>
+        <article class="feature">
+          <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13.5h6L10 21l8-10.5h-6z"/></svg></div>
           <h3>এক চাপে মোড বদল</h3>
-          <p><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>B</kbd> চাপলে English → বাংলা → ক্লাসিক। স্ক্রিনের উপরের ছোট বার আর ট্রে আইকন দেখায় এখন কোন মোড চলছে।</p>
+          <p><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>B</kbd> — English, বাংলা, ক্লাসিক।</p>
         </article>
-        <article class="card">
-          <div class="card-icon" aria-hidden="true">🔒</div>
+        <article class="feature">
+          <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 4.5 6v5.5c0 4.6 3.2 8.4 7.5 9.5 4.3-1.1 7.5-4.9 7.5-9.5V6z"/><path d="m9 12 2 2 4-4"/></svg></div>
           <h3>আপনার লেখা আপনারই</h3>
-          <p>কোনো ইন্টারনেট সংযোগ নেই, কোনো তথ্য সংগ্রহ নেই, কোনো বিজ্ঞাপন নেই। Android অ্যাপ কোনো অনুমতিও চায় না।</p>
+          <p>ইন্টারনেট নেই, বিজ্ঞাপন নেই, তথ্য সংগ্রহ নেই।</p>
         </article>
-        <article class="card">
-          <div class="card-icon" aria-hidden="true">⚡</div>
+        <article class="feature">
+          <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div>
           <h3>হালকা ও দ্রুত</h3>
-          <p>Windows ইনস্টলার প্রায় ২.৮ MB, Android অ্যাপ এক MB-এরও কম। প্রতিটি কী চাপে কোনো দেরি নেই, পুরনো কম্পিউটারেও চলে।</p>
+          <p>পুরনো কম্পিউটারেও কী চাপার সাথে সাথে লেখা।</p>
         </article>
-        <article class="card">
-          <div class="card-icon" aria-hidden="true">✓</div>
-          <h3>সব জায়গায় কাজ করে</h3>
-          <p>Windows-এর নিজস্ব ইনপুট ব্যবস্থায় (TSF) তৈরি, তাই Word, Notepad, Chrome, Edge, Facebook — সাধারণ যেকোনো অ্যাপে লেখা যায়।</p>
+        <article class="feature">
+          <div class="feature-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="13" height="10" rx="1.5"/><path d="M7 18.5h5"/><rect x="15.5" y="9" width="5.5" height="11" rx="1.2"/></svg></div>
+          <h3>কম্পিউটার ও মোবাইল</h3>
+          <p>Windows আর Android-এ একই নিয়মে একই লেখা।</p>
         </article>
       </div>
     </div>
   </section>
 
-  <!-- Layout -->
-  <section id="layout" class="section section-alt">
+  <section class="section section-alt" id="layout">
     <div class="wrap">
-      <h2>বিজয় কী-বিন্যাস</h2>
-      <p class="section-lead">বড় অক্ষর: কী চাপলে যা আসে। ছোট অক্ষর (উপরে বাঁয়ে): <kbd>Shift</kbd> সহ। আপনার কম্পিউটারের কীবোর্ডে কী চেপেও দেখতে পারেন।</p>
-      <div class="layer-switch" role="group" aria-label="কোন স্তর দেখাবে">
-        <button type="button" class="layer-btn is-on" data-layer="main">সাধারণ ও Shift</button>
-        <button type="button" class="layer-btn" data-layer="link"><kbd>g</kbd> চাপার পরে</button>
+      <div class="section-head">
+        <span class="eyebrow">কী-বিন্যাস</span>
+        <h2>চেনা কী, চেনা নিয়ম।</h2>
+        <p>নিজের কীবোর্ডে কী চেপে দেখুন — <kbd>Shift</kbd> ধরলে Shift-এর অক্ষর জ্বলে ওঠে।</p>
       </div>
-      <div class="kb-scroll">
-        <div class="kb" id="kb" aria-label="বিজয় কীবোর্ড লেআউট"></div>
+      <div class="kb-panel">
+        <div class="kb-toolbar">
+          <div class="seg" role="group" aria-label="কোন স্তর দেখাবে">
+            <button type="button" data-layer="main" aria-pressed="true">সাধারণ ও Shift</button>
+            <button type="button" data-layer="link" aria-pressed="false">g চাপার পরে</button>
+          </div>
+          <span class="kb-tip">বড় অক্ষর: কী · ছোট অক্ষর: Shift + কী</span>
+        </div>
+        <div class="kb" id="kb" role="img" aria-label="বিজয় কীবোর্ড লেআউট"></div>
+        <p class="kb-note">সফটওয়্যারের আসল লেআউট ফাইল থেকে তৈরি।</p>
       </div>
-      <p class="kb-note">এই ছবিটি কীবোর্ডের আসল লেআউট ফাইল থেকে স্বয়ংক্রিয়ভাবে তৈরি — সফটওয়্যার ঠিক এভাবেই টাইপ করে।</p>
 
-      <h3 class="rules-title">লেখার নিয়ম — কয়েকটি উদাহরণ</h3>
-      <div class="rules">
-        <div class="rule"><span class="keys"><kbd>d</kbd><kbd>j</kbd></span><span class="arrow">→</span><span class="out">কি</span><span class="why">ি-কার আগে, তারপর ব্যঞ্জন</span></div>
-        <div class="rule"><span class="keys"><kbd>c</kbd><kbd>j</kbd><kbd>f</kbd></span><span class="arrow">→</span><span class="out">কো</span><span class="why">ে-কার আগে, া-কার পরে</span></div>
-        <div class="rule"><span class="keys"><kbd>j</kbd><kbd>g</kbd><kbd>k</kbd></span><span class="arrow">→</span><span class="out">ক্ত</span><span class="why">মাঝে <kbd>g</kbd> দিলে যুক্তবর্ণ</span></div>
-        <div class="rule"><span class="keys"><kbd>j</kbd><kbd>g</kbd><kbd>N</kbd></span><span class="arrow">→</span><span class="out">ক্ষ</span><span class="why">ক + ্ + ষ</span></div>
-        <div class="rule"><span class="keys"><kbd>j</kbd><kbd>m</kbd><kbd>A</kbd></span><span class="arrow">→</span><span class="out">কর্ম</span><span class="why">রেফ (<kbd>Shift</kbd>+<kbd>A</kbd>) যে অক্ষরের উপরে, তার পরে</span></div>
-        <div class="rule"><span class="keys"><kbd>g</kbd><kbd>f</kbd><kbd>d</kbd><kbd>m</kbd></span><span class="arrow">→</span><span class="out">আমি</span><span class="why"><kbd>g</kbd> + কার = স্বরবর্ণ</span></div>
-        <div class="rule"><span class="keys"><kbd>j</kbd><kbd>z</kbd><kbd>s</kbd></span><span class="arrow">→</span><span class="out">ক্রু</span><span class="why">র-ফলা <kbd>z</kbd>, য-ফলা <kbd>Z</kbd></span></div>
-        <div class="rule"><span class="keys"><kbd>y</kbd><kbd>f</kbd><kbd>&amp;</kbd></span><span class="arrow">→</span><span class="out">চাঁ</span><span class="why">চন্দ্রবিন্দু <kbd>Shift</kbd>+<kbd>7</kbd></span></div>
+      <div class="examples">
+        <div class="example"><div class="example-out">কি</div><div class="example-keys"><kbd>d</kbd><kbd>j</kbd></div><p>ি-কার আগে</p></div>
+        <div class="example"><div class="example-out">ক্ত</div><div class="example-keys"><kbd>j</kbd><kbd>g</kbd><kbd>k</kbd></div><p><kbd>g</kbd> দিয়ে যুক্তবর্ণ</p></div>
+        <div class="example"><div class="example-out">কর্ম</div><div class="example-keys"><kbd>j</kbd><kbd>m</kbd><kbd>⇧a</kbd></div><p>রেফ অক্ষরের পরে</p></div>
+        <div class="example"><div class="example-out">আমি</div><div class="example-keys"><kbd>g</kbd><kbd>f</kbd><kbd>d</kbd><kbd>m</kbd></div><p><kbd>g</kbd> + কার = স্বরবর্ণ</p></div>
       </div>
     </div>
   </section>
 
-  <!-- Platforms & download -->
-  <section id="download" class="section">
+  <section class="memory" aria-labelledby="memory-title">
+    <div class="wrap memory-inner">
+      <figure><img src="assets/july36.jpg" alt="জুলাই ৩৬ — শিল্পকর্ম" width="1024" height="576" loading="lazy"></figure>
+      <div>
+        <div class="ribbon" aria-hidden="true"><i></i><i></i></div>
+        <blockquote id="memory-title">জুলাইয়ের অনুভূতি স্মরণ হোক,<br>বাংলা লেখার মাধ্যমে।</blockquote>
+        <p class="dedication">২০২৪ সালের জুলাইয়ের ছাত্র-জনতার গণঅভ্যুত্থানের স্মরণে</p>
+        <a class="text-link" href="about.html">নামের পেছনের গল্প →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section cta-band-wrap">
     <div class="wrap">
-      <h2>ডাউনলোড</h2>
-      <div class="platforms">
-        <article class="platform">
-          <h3>Windows</h3>
-          <p class="platform-meta">Windows 10 ও 11 (৬৪-বিট) · প্রায় ২.৮ MB</p>
-          <ol>
-            <li>ইনস্টলার নামিয়ে চালান (প্রশাসকের অনুমতি চাইবে)।</li>
-            <li>ভাষার তালিকায় “জুলাই বাংলা কীবোর্ড” যোগ হবে।</li>
-            <li><kbd>Win</kbd>+<kbd>Space</kbd> দিয়ে বেছে নিন, <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>B</kbd> দিয়ে মোড বদলান।</li>
-          </ol>
-          <a class="btn btn-primary" href="https://github.com/mahbubul-faizaexpress/july_bangla_keyboard/releases">Windows-এর জন্য ডাউনলোড</a>
-        </article>
-        <article class="platform">
-          <h3>Android</h3>
-          <p class="platform-meta">Android ৭ বা নতুন · এক MB-এর কম · কোনো অনুমতি লাগে না</p>
-          <ol>
-            <li>অ্যাপ ইনস্টল করে খুলুন।</li>
-            <li>“১. কীবোর্ড চালু করুন”, তারপর “২. জুলাই বাংলা বেছে নিন”।</li>
-            <li>মোড বোতাম (বাং / ক্লা / EN) চেপে মোড বদলান।</li>
-          </ol>
-          <a class="btn btn-primary" href="https://github.com/mahbubul-faizaexpress/july_bangla_keyboard/releases">Android-এর জন্য ডাউনলোড</a>
-        </article>
-        <article class="platform platform-soon">
-          <h3>Linux ও macOS</h3>
-          <p class="platform-meta">পরিকল্পনায় আছে</p>
-          <p>একই কীবোর্ড-ইঞ্জিন দিয়ে Linux (Fcitx5 ও IBus) আর macOS সংস্করণ আসবে, যাতে সব জায়গায় একই কী-তে একই লেখা আসে।</p>
-        </article>
+      <div class="cta-card">
+        <div>
+          <h2>আজই বাংলায় লেখা শুরু করুন।</h2>
+          <p>ইনস্টল করতে এক মিনিট, মোড বদলাতে এক চাপ।</p>
+        </div>
+        <a class="btn btn-primary btn-lg" href="download.html" data-smart-download>
+          <span class="btn-stack"><span data-title>ডাউনলোড করুন</span><span class="btn-sub" data-sub>বিনামূল্যে</span></span>
+        </a>
       </div>
-      <p class="preview-note">এটি প্রিভিউ সংস্করণ। কোনো সমস্যা পেলে <a href="https://github.com/mahbubul-faizaexpress/july_bangla_keyboard/issues">GitHub-এ জানান</a>।</p>
     </div>
   </section>
-
-  <!-- FAQ -->
-  <section id="faq" class="section section-alt">
-    <div class="wrap faq">
-      <h2>প্রশ্নোত্তর</h2>
-      <details>
-        <summary>এটা কি সত্যিই বিনামূল্যে?</summary>
-        <p>হ্যাঁ। কোনো টাকা, নিবন্ধন বা বিজ্ঞাপন নেই। সফটওয়্যারটি ওপেন সোর্স, সব কোড GitHub-এ আছে।</p>
-      </details>
-      <details>
-        <summary>আমি আগে বিজয় ব্যবহার করতাম। নতুন করে শিখতে হবে?</summary>
-        <p>না। কী-বিন্যাস আর লেখার নিয়ম বিজয়ের মতোই — কার আগে, রেফ পরে, <kbd>g</kbd> দিয়ে যুক্তবর্ণ। জুলাই বাংলা কীবোর্ড একটি স্বাধীন প্রকল্প; এটি বিজয়-সামঞ্জস্যপূর্ণ লেআউট ব্যবহার করে।</p>
-      </details>
-      <details>
-        <summary>ইউনিকোড আর ক্লাসিকের পার্থক্য কী?</summary>
-        <p>ইউনিকোড এখনকার মানদণ্ড — Facebook, ইমেইল, ওয়েবসাইট, Word, সব জায়গায় চলে। ক্লাসিক মোড পুরনো ANSI ফন্টের (যেমন SutonnyMJ) জন্য, যা অনেক প্রেস আর পুরনো দলিলে ব্যবহার হয়। ক্লাসিক লেখা দেখতে সেই ফন্টটি আপনার কম্পিউটারে থাকতে হবে।</p>
-      </details>
-      <details>
-        <summary>আমার লেখা কি কোথাও পাঠানো হয়?</summary>
-        <p>না। কীবোর্ড কোনো ইন্টারনেট সংযোগ ব্যবহার করে না, কিছু জমা রাখে না, কোথাও পাঠায় না। শুধু আপনার বেছে নেওয়া মোডটুকু মনে রাখে।</p>
-      </details>
-      <details>
-        <summary>কোন কোন অ্যাপে কাজ করে?</summary>
-        <p>Windows-এর নিজস্ব ইনপুট ব্যবস্থা (Text Services Framework) ব্যবহার করে, তাই Word, Notepad, Chrome, Edge, Facebook-সহ সাধারণ অ্যাপে কাজ করে। Android-এ যেকোনো লেখার ঘরে কাজ করে।</p>
-      </details>
-      <details>
-        <summary>Windows “অজানা প্রকাশক” সতর্কবার্তা দেখাচ্ছে কেন?</summary>
-        <p>প্রিভিউ সংস্করণে এখনো ডিজিটাল স্বাক্ষর নেই। চূড়ান্ত সংস্করণে এটি থাকবে। নিরাপত্তার জন্য সবসময় এই সাইট বা GitHub থেকেই নামান।</p>
-      </details>
-    </div>
-  </section>
-
 </main>
 
 <footer class="footer">
-  <div class="wrap footer-inner">
-    <div class="footer-brand">
-      <img src="assets/logo.png" alt="" width="28" height="28">
-      <span>জুলাই বাংলা কীবোর্ড</span>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="index.html">
+          <img src="assets/logo.png" alt="" width="34" height="34">
+          <span>জুলাই বাংলা কীবোর্ড</span>
+        </a>
+        <p>জুলাইয়ের অনুভূতি স্মরণ হোক, বাংলা লেখার মাধ্যমে।</p>
+      </div>
+      <div>
+        <h4>সফটওয়্যার</h4>
+        <ul>
+          <li><a href="download.html">ডাউনলোড</a></li>
+          <li><a href="guide.html">ব্যবহার নির্দেশিকা</a></li>
+          <li><a href="index.html#layout">কী-বিন্যাস</a></li>
+          <li><a href="https://github.com/mahbubul-faizaexpress/july_bangla_keyboard/releases">সংস্করণ ও পরিবর্তন</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>সহায়তা</h4>
+        <ul>
+          <li><a href="guide.html#faq">প্রশ্নোত্তর</a></li>
+          <li><a href="guide.html#troubleshooting">সমস্যা ও সমাধান</a></li>
+          <li><a href="https://github.com/mahbubul-faizaexpress/july_bangla_keyboard/issues/new/choose">সমস্যা জানান</a></li>
+          <li><a href="about.html#contact">যোগাযোগ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>প্রকল্প</h4>
+        <ul>
+          <li><a href="about.html">আমাদের কথা</a></li>
+          <li><a href="https://github.com/mahbubul-faizaexpress/july_bangla_keyboard">সোর্স কোড</a></li>
+          <li><a href="about.html#contribute">অবদান রাখুন</a></li>
+          <li><a href="https://github.com/mahbubul-faizaexpress/july_bangla_keyboard/blob/main/docs/ROADMAP.md">রোডম্যাপ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>আইনি</h4>
+        <ul>
+          <li><a href="privacy.html">গোপনীয়তা নীতি</a></li>
+          <li><a href="terms.html">ব্যবহারের শর্তাবলি</a></li>
+          <li><a href="terms.html#license">লাইসেন্স</a></li>
+          <li><a href="terms.html#credits">কৃতজ্ঞতা</a></li>
+        </ul>
+      </div>
     </div>
-    <p>জুলাইয়ের অনুভূতি স্মরণ হোক, বাংলা লেখার মাধ্যমে।</p>
-    <p class="footer-links">
-      <a href="https://github.com/mahbubul-faizaexpress/july_bangla_keyboard">সোর্স কোড</a> ·
-      <a href="https://github.com/mahbubul-faizaexpress/july_bangla_keyboard/issues">সমস্যা জানান</a>
-    </p>
-    <p class="fineprint">“বিজয়” তার স্বত্বাধিকারীর ট্রেডমার্ক। জুলাই বাংলা কীবোর্ড একটি স্বাধীন প্রকল্প, বিজয়ের সাথে সম্পর্কিত নয়।</p>
+    <div class="footer-bottom">
+      <span>© <span data-year>২০২৬</span> জুলাই বাংলা কীবোর্ড</span>
+      <span>“বিজয়” তার স্বত্বাধিকারীর ট্রেডমার্ক। এই প্রকল্প বিজয়ের সাথে সম্পর্কিত নয়।</span>
+    </div>
   </div>
 </footer>
 

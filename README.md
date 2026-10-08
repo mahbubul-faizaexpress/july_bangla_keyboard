@@ -1,52 +1,91 @@
-# জুলাই বাংলা কীবোর্ড (July Bangla Keyboard)
+<p align="center">
+  <img src="website/assets/logo.png" alt="" width="96" height="96">
+</p>
 
-> জুলাইয়ের অনুভূতি স্মরণ হোক, বাংলা লেখার মাধ্যমে।
->
-> ২০২৪ সালের জুলাইয়ের ছাত্র-জনতার গণঅভ্যুত্থানের স্মরণে
+<h1 align="center">জুলাই বাংলা কীবোর্ড · July Bangla Keyboard</h1>
 
-A native Windows Bangla input method written in C++20, with Bijoy-style typing in three
-modes:
+<p align="center">
+  <b>জুলাইয়ের অনুভূতি স্মরণ হোক, বাংলা লেখার মাধ্যমে।</b><br>
+  ২০২৪ সালের জুলাইয়ের ছাত্র-জনতার গণঅভ্যুত্থানের স্মরণে
+</p>
 
-- **English**
-- **বাংলা** — Unicode output
-- **বিজয়** — Classic output (SutonnyMJ / Bijoy ANSI compatible)
+<p align="center">
+  <a href="https://mahbubul-faizaexpress.github.io/july_bangla_keyboard/">Website</a> ·
+  <a href="https://mahbubul-faizaexpress.github.io/july_bangla_keyboard/download.html">Download</a> ·
+  <a href="https://mahbubul-faizaexpress.github.io/july_bangla_keyboard/guide.html">User guide</a> ·
+  <a href="docs/ROADMAP.md">Roadmap</a>
+</p>
 
-`Ctrl+Alt+B` cycles through the modes.
+A free Bangla keyboard with the Bijoy-compatible layout, for **Windows** and **Android**,
+with Linux next. It has three modes:
 
-## Design
+| Mode | Output |
+|---|---|
+| **বাংলা** | Unicode Bangla, for the web, email and Office |
+| **ক্লাসিক** | SutonnyMJ / Bijoy ANSI glyph codes, for legacy fonts |
+| **English** | Plain Latin text |
 
-The keyboard is a Windows **Text Services Framework (TSF)** text service. It has:
+`Ctrl+Alt+B` cycles through the modes on Windows. On Android, use the mode key.
 
-- no global keyboard hooks
-- no injected keystrokes
-- no runtime dependencies
-- no network access
+## Highlights
 
-A small companion program shows the current mode in a Bijoy-style floating bar, a tray
-icon and Windows' own input indicator.
+- **Bijoy typing rules.** Pre-base kars come first, reph after its cluster, `g` links
+  conjuncts, and অ + া = আ. Every layout row is verified against the master Bijoy chart.
+- **Classic output.** All 222 SutonnyMJ glyph rows were verified in the font.
+- **One engine everywhere.** A small C++20 engine (`src/engine`) is shared by the Windows
+  text service and the Android keyboard. The same golden tests run for both.
+- **Private by design.**
+  - No network access, telemetry or ads.
+  - No global keyboard hooks.
+  - The Android app requests no permissions.
+- **Native and small.**
+  - Windows uses a TSF text service, with a ~2.8 MB installer.
+  - Android uses an `InputMethodService` with an iPhone-style keyboard, in a ~0.6 MB APK.
 
 ## Status
 
-Version 0.3.0 (preview). What works:
+Version **0.3.0 (preview)**.
 
-- Typing in Unicode and Classic modes, verified end to end through TSF.
-- The mode switch, status bar, tray icon and splash screen.
-- An Inno Setup installer.
+| Platform | State |
+|---|---|
+| Windows 10/11 | Preview: installer, status bar, tray, splash |
+| Android 7+ | Preview: on-screen keyboard and hardware keys |
+| Linux (Fcitx5, IBus) | Planned next ([plan](docs/PLATFORMS.md)) |
+| macOS | Planned |
 
-Not done yet:
+The production gates are listed in [docs/RELEASE.md](docs/RELEASE.md).
 
-- The Classic (SutonnyMJ) glyph table has not been verified in the SutonnyMJ font.
-- The application compatibility matrix is still being filled.
-- The binaries are not code-signed yet.
+## Repository layout
+
+```
+src/engine/      shared C++20 engine: layout, composer, Unicode and Classic backends
+src/tip/         Windows TSF text service (JulyTip.dll)
+src/app/         Windows companion: status bar, tray icon, splash (JulyBangla.exe)
+src/common/      shared Windows code (settings, mode visuals)
+android/         Android keyboard (Kotlin + JNI bridge to src/engine)
+layouts/         Bijoy layout and the verified SutonnyMJ table (source of truth)
+tests/           unit, golden, fuzz and generator tests; TSF smoke test
+tools/           table generators, icon and website generators, build scripts
+installer/       Inno Setup script
+website/         project website (GitHub Pages)
+docs/            architecture, layout, Classic mode, release and platform docs
+```
 
 ## Build
 
-Visual Studio 2026 Build Tools (MSVC x64/x86, Windows 11 SDK, CMake). See
-[docs/BUILD.md](docs/BUILD.md).
+**Windows.** You need the Visual Studio 2026 Build Tools (MSVC x64/x86, Windows 11 SDK,
+CMake). See [docs/BUILD.md](docs/BUILD.md).
 
 ```
 cmake --preset x64 && cmake --build --preset x64-release && ctest --preset x64-release
 powershell -ExecutionPolicy Bypass -File tools\Build-Installer.ps1
+```
+
+**Android.** You need JDK 17, Android SDK 36, NDK 28.2 and CMake 3.31. See
+[android/README.md](android/README.md).
+
+```
+cd android && gradlew assembleDebug testDebugUnitTest
 ```
 
 ## Documentation
@@ -56,16 +95,24 @@ powershell -ExecutionPolicy Bypass -File tools\Build-Installer.ps1
 - [Classic mode](docs/CLASSIC_MODE.md)
 - [Compatibility](docs/COMPATIBILITY.md)
 - [Performance](docs/PERFORMANCE.md)
-- [Security and privacy](docs/SECURITY.md)
-- [Roadmap](docs/ROADMAP.md)
-- [Platforms plan (Android, Linux, macOS)](docs/PLATFORMS.md)
-- [Release process and production gates](docs/RELEASE.md)
+- [Security design](docs/SECURITY.md)
+- [Platforms plan](docs/PLATFORMS.md)
+- [Release process](docs/RELEASE.md)
 - [সমস্যা ও সমাধান (Troubleshooting)](docs/TROUBLESHOOTING.md)
-- [Third-party notices](THIRD_PARTY_NOTICES.md)
+
+## Contributing
+
+Bug reports and ideas are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[Code of Conduct](CODE_OF_CONDUCT.md). Report security issues privately; see
+[SECURITY.md](SECURITY.md).
 
 ## License
 
-Copyright © 2026 Mahbubul Alam. All rights reserved. No license is granted at this time.
+Copyright © 2026 Mahbubul Alam. The open-source license is being finalised; until then
+all rights are reserved. The program itself can be used free of charge.
 
-`layouts/sutonnymj.classic` is under MPL-2.0; see
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+`layouts/sutonnymj.classic` is under MPL-2.0. The website font Hind Siliguri is under the
+SIL OFL 1.1. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+
+“Bijoy” is a trademark of its owner. This project is independent and not affiliated with
+Bijoy.

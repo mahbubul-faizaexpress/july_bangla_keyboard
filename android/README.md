@@ -65,3 +65,27 @@ gradlew bundleRelease                       # App Bundle for Google Play (sign b
 - Accessibility (TalkBack) for the on-screen keys.
 - Release signing and the Play Store listing.
 - The final launcher icon (the July logo) to replace the placeholder.
+
+## Release signing
+
+The release APK or App Bundle is signed with a key kept **outside** the repository.
+Create the key once, then back it up safely: losing it means you can no longer update
+the app.
+
+```
+keytool -genkeypair -keystore %USERPROFILE%\.julybangla\android-release.jks -storetype PKCS12 ^
+  -alias julybangla -keyalg RSA -keysize 4096 -validity 10000
+```
+
+Next to the key, create `%USERPROFILE%\.julybangla\android-release.properties`:
+
+```
+storeFile=C:/Users/<you>/.julybangla/android-release.jks
+storePassword=...
+keyAlias=julybangla
+keyPassword=...
+```
+
+Then add `july.signing=C:/Users/<you>/.julybangla/android-release.properties` to
+`android/local.properties`, and run `gradlew assembleRelease` (or `bundleRelease` for
+Google Play). Without this file, release builds are unsigned.
