@@ -10,9 +10,9 @@
 </p>
 
 <p align="center">
-  <a href="https://mahbubul-faizaexpress.github.io/july_bangla_keyboard/">Website</a> ·
-  <a href="https://mahbubul-faizaexpress.github.io/july_bangla_keyboard/download.html">Download</a> ·
-  <a href="https://mahbubul-faizaexpress.github.io/july_bangla_keyboard/guide.html">User guide</a> ·
+  <a href="https://julykeyboard.vercel.app/">Website</a> ·
+  <a href="https://julykeyboard.vercel.app/download.html">Download</a> ·
+  <a href="https://julykeyboard.vercel.app/guide.html">User guide</a> ·
   <a href="docs/ROADMAP.md">Roadmap</a>
 </p>
 
@@ -67,7 +67,7 @@ layouts/         Bijoy layout and the verified SutonnyMJ table (source of truth)
 tests/           unit, golden, fuzz and generator tests; TSF smoke test
 tools/           table generators, icon and website generators, build scripts
 installer/       Inno Setup script
-website/         project website (GitHub Pages)
+website/         project website (julykeyboard.vercel.app)
 docs/            architecture, layout, Classic mode, release and platform docs
 ```
 

@@ -18,7 +18,7 @@ Sources: [MSI/EXE package requirements](https://learn.microsoft.com/en-us/window
 | 4 | Silent install tested (`/VERYSILENT /SUPPRESSMSGBOXES /NORESTART`) | ⏳ supported by Inno Setup; not yet run |
 | 5 | Offline, standalone installer | ✅ |
 | 6 | Versioned HTTPS download URL that never changes | ✅ `…/releases/download/v<version>/JulyBanglaKeyboard-Setup.exe` |
-| 7 | Privacy policy URL | ✅ `<website>/privacy.html` |
+| 7 | Privacy policy URL | ✅ `https://julykeyboard.vercel.app/privacy.html` |
 | 8 | Uninstall → reinstall leaves nothing behind | ⏳ |
 | 9 | IME categories (`IMMERSIVESUPPORT`, `SYSTRAYSUPPORT`), icons in the DLL, `RegisterProfile` | ✅ |
 | 10 | Store logo (`resources/store/logo-300.png`) and at least one screenshot | ⏳ logo done; screenshots to take |
@@ -36,15 +36,15 @@ Possible certification questions, from the IME guidelines:
 | Field | Value |
 |---|---|
 | App type | EXE or MSI app |
-| Package URL | `https://github.com/<owner>/july_bangla_keyboard/releases/download/v<version>/JulyBanglaKeyboard-Setup.exe` |
+| Package URL | `https://github.com/promahbubul/july_bangla_keyboard/releases/download/v<version>/JulyBanglaKeyboard-Setup.exe` |
 | Architecture | x64 |
 | Installer parameters | `/VERYSILENT /SUPPRESSMSGBOXES /NORESTART` |
 | App language | Bangla (Bangladesh), English |
 | Category | Utilities & tools |
 | Price | Free |
-| Privacy policy | `<website>/privacy.html` |
-| Website | `<website>/` |
-| Support contact | `<website>/guide.html` |
+| Privacy policy | `https://julykeyboard.vercel.app/privacy.html` |
+| Website | `https://julykeyboard.vercel.app/` |
+| Support contact | `https://julykeyboard.vercel.app/guide.html` |
 
 A silent install selects both installer tasks: the keyboard is added to the user's
 keyboard list and the status bar starts with Windows.
