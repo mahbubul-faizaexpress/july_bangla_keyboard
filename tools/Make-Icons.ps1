@@ -117,6 +117,15 @@ $t.Dispose()
 New-Item -ItemType Directory -Force (Join-Path $androidRes 'drawable-nodpi') | Out-Null
 Copy-Item (Join-Path $root 'resources\splash.jpg') (Join-Path $androidRes 'drawable-nodpi\july_splash.jpg')
 
+# --- Microsoft Store listing ------------------------------------------------------------
+$store = Join-Path $root 'resources\store'
+New-Item -ItemType Directory -Force $store | Out-Null
+foreach ($size in 300) {
+    $t = Get-Tile $size
+    $t.Save((Join-Path $store "logo-$size.png"), [System.Drawing.Imaging.ImageFormat]::Png)
+    $t.Dispose()
+}
+
 # --- Website ----------------------------------------------------------------------------
 $web = Join-Path $root 'website\assets'
 New-Item -ItemType Directory -Force $web | Out-Null

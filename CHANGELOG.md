@@ -4,6 +4,11 @@ All notable changes are listed here. Versions follow [SemVer](https://semver.org
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-10
+
+### Licence
+- The project is now licensed under the **GNU GPL, version 3 or later**.
+
 ### Added
 - **Android preview.** An iPhone-style on-screen keyboard (four rows, ১২৩ and #+= pages, key
   preview, action labels on Return) and hardware-key support. It shares the C++ engine
@@ -19,6 +24,9 @@ All notable changes are listed here. Versions follow [SemVer](https://semver.org
   - CONTRIBUTING, Code of Conduct, security policy
   - issue and pull request templates
   - CI workflow
+- **Automated releases.** Pushing a version tag builds, tests and publishes the installer
+  (`.github/workflows/release.yml`).
+- **Microsoft Store** submission checklist and listing text (`docs/STORE.md`).
 
 ### Changed
 - **Windows splash.**

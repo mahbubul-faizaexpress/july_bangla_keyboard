@@ -14,6 +14,13 @@
 #else
   #define OutputSuffix ""
 #endif
+; Where the built binaries are and where Setup is written (tools\ci overrides these).
+#ifndef BuildRoot
+  #define BuildRoot "..\build"
+#endif
+#ifndef OutDir
+  #define OutDir "..\build\installer"
+#endif
 
 [Setup]
 AppId={{47576C5C-9727-4729-94D4-B66A71DA7CB2}
@@ -28,7 +35,7 @@ PrivilegesRequired=admin
 ArchitecturesAllowed=x64compatible
 ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0.17763
-OutputDir=..\build\installer
+OutputDir={#OutDir}
 OutputBaseFilename=JulyBanglaKeyboard-{#AppVersion}{#OutputSuffix}-Setup
 Compression=lzma2/max
 SolidCompression=yes
@@ -51,11 +58,12 @@ Name: "addkeyboard"; Description: "Add July Bangla Keyboard to my keyboard list 
 Name: "startup"; Description: "Show the status bar and tray icon when Windows starts"
 
 [Files]
-Source: "..\build\x64\src\tip\Release\JulyTip.dll"; DestDir: "{app}\x64"; Flags: ignoreversion restartreplace uninsrestartdelete regserver 64bit
-Source: "..\build\x86\src\tip\Release\JulyTip.dll"; DestDir: "{app}\x86"; Flags: ignoreversion restartreplace uninsrestartdelete regserver 32bit
-Source: "..\build\x64\src\app\Release\JulyBangla.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace uninsrestartdelete
+Source: "{#BuildRoot}\x64\src\tip\Release\JulyTip.dll"; DestDir: "{app}\x64"; Flags: ignoreversion restartreplace uninsrestartdelete regserver 64bit
+Source: "{#BuildRoot}\x86\src\tip\Release\JulyTip.dll"; DestDir: "{app}\x86"; Flags: ignoreversion restartreplace uninsrestartdelete regserver 32bit
+Source: "{#BuildRoot}\x64\src\app\Release\JulyBangla.exe"; DestDir: "{app}"; Flags: ignoreversion restartreplace uninsrestartdelete
 Source: "..\tools\dev\Enable-Profile.ps1"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\docs\SECURITY.md"; DestDir: "{app}"; DestName: "PRIVACY.md"; Flags: ignoreversion
+Source: "..\LICENSE"; DestDir: "{app}"; DestName: "LICENSE.txt"; Flags: ignoreversion
 
 [InstallDelete]
 ; Leftovers of developer registrations (renamed loaded DLLs); skipped if still in use.

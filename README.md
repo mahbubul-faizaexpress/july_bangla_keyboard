@@ -44,7 +44,7 @@ with Linux next. It has three modes:
 
 ## Status
 
-Version **0.3.0 (preview)**.
+Version **0.4.0 (preview)**.
 
 | Platform | State |
 |---|---|
@@ -98,6 +98,7 @@ cd android && gradlew assembleDebug testDebugUnitTest
 - [Security design](docs/SECURITY.md)
 - [Platforms plan](docs/PLATFORMS.md)
 - [Release process](docs/RELEASE.md)
+- [Microsoft Store submission](docs/STORE.md)
 - [সমস্যা ও সমাধান (Troubleshooting)](docs/TROUBLESHOOTING.md)
 
 ## Contributing
@@ -108,8 +109,11 @@ Bug reports and ideas are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) and t
 
 ## License
 
-Copyright © 2026 Mahbubul Alam. The open-source license is being finalised; until then
-all rights are reserved. The program itself can be used free of charge.
+Copyright © 2026 Mahbubul Alam.
+
+July Bangla Keyboard is free software: you can redistribute it and/or modify it under the
+terms of the **GNU General Public License, version 3 or (at your option) any later
+version**. It is distributed without any warranty. See [LICENSE](LICENSE).
 
 `layouts/sutonnymj.classic` is under MPL-2.0. The website font Hind Siliguri is under the
 SIL OFL 1.1. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).

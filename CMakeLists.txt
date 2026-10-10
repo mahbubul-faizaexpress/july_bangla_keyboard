@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.25)
 
 project(JulyBanglaKeyboard
-    VERSION 0.3.0
+    VERSION 0.4.0
     DESCRIPTION "Native Windows Bangla input method (TSF)"
     LANGUAGES CXX)
 

@@ -1,0 +1,121 @@
+# Builds and publishes a release when a version tag (v1.2.3) is pushed.
+#
+# The website's download buttons point to releases/latest/download/<name>, so every
+# release attaches files with these exact names:
+#   JulyBanglaKeyboard-Setup.exe   Windows installer
+#   JulyBanglaKeyboard.apk         Android app (only when the signing secrets are set)
+#
+# Android signing secrets (optional): ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD,
+# ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD. Without them no APK is attached, because an
+# unsigned APK cannot be installed.
+name: Release
+
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    name: Windows installer
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check that the tag matches the project version
+        shell: pwsh
+        run: |
+          $version = (Select-String -Path CMakeLists.txt -Pattern '^\s*VERSION\s+(\d+\.\d+\.\d+)').Matches[0].Groups[1].Value
+          if ("v$version" -ne $env:GITHUB_REF_NAME) { throw "Tag $env:GITHUB_REF_NAME does not match CMakeLists.txt VERSION $version." }
+          "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+      - name: Build and test x64
+        shell: pwsh
+        run: ./tools/ci/Build-Arch.ps1 -Arch x64
+      - name: Build and test x86
+        shell: pwsh
+        run: ./tools/ci/Build-Arch.ps1 -Arch x86
+      - name: Inno Setup
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) { choco install innosetup --no-progress -y; if ($LASTEXITCODE -ne 0) { throw 'Installing Inno Setup failed.' } }
+          & $iscc "/DAppVersion=$env:VERSION" installer\JulyBangla.iss
+          if ($LASTEXITCODE -ne 0) { throw 'ISCC failed.' }
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item "build\installer\JulyBanglaKeyboard-$env:VERSION-Setup.exe" dist\JulyBanglaKeyboard-Setup.exe
+      # Code signing goes here once a certificate is available (see docs/RELEASE.md).
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: dist/JulyBanglaKeyboard-Setup.exe
+          if-no-files-found: error
+
+  android:
+    name: Android APK
+    runs-on: ubuntu-latest
+    env:
+      KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install SDK packages
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "ndk;28.2.13676358" "cmake;3.31.6" > /dev/null
+      - name: Unit tests
+        working-directory: android
+        run: bash ./gradlew --no-daemon testDebugUnitTest
+      - name: Signed release APK
+        if: env.KEYSTORE_BASE64 != ''
+        working-directory: android
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          umask 077
+          echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/release.jks"
+          printf 'storeFile=%s\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+            "$RUNNER_TEMP/release.jks" "$KEYSTORE_PASSWORD" "$KEY_ALIAS" "$KEY_PASSWORD" > "$RUNNER_TEMP/signing.properties"
+          JULY_SIGNING="$RUNNER_TEMP/signing.properties" bash ./gradlew --no-daemon assembleRelease
+          mkdir -p ../dist
+          cp app/build/outputs/apk/release/app-release.apk ../dist/JulyBanglaKeyboard.apk
+          rm -f "$RUNNER_TEMP/release.jks" "$RUNNER_TEMP/signing.properties"
+      - uses: actions/upload-artifact@v4
+        if: env.KEYSTORE_BASE64 != ''
+        with:
+          name: android
+          path: dist/JulyBanglaKeyboard.apk
+          if-no-files-found: error
+
+  publish:
+    name: Publish release
+    needs: [windows, android]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - name: Checksums and notes
+        run: |
+          cd dist
+          sha256sum * > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+          cd ..
+          version="${GITHUB_REF_NAME#v}"
+          {
+            # The section of CHANGELOG.md for this version.
+            awk -v h="## [$version]" 'index($0, h) == 1 {on = 1; next} on && index($0, "## [") == 1 {exit} on' CHANGELOG.md
+            echo
+            echo "---"
+            echo "The installer is not code-signed yet, so Windows may show an \"unknown publisher\" warning."
+            echo "Verify your download with \`SHA256SUMS.txt\`."
+          } > notes.md
+      - name: Create the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release create "$GITHUB_REF_NAME" dist/* --title "July Bangla Keyboard ${GITHUB_REF_NAME#v}" --notes-file notes.md --latest

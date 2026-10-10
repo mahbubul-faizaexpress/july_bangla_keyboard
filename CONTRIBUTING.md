@@ -45,7 +45,7 @@ with space-separated US keys where an uppercase letter means Shift: `j m A` → 
   `src/app` or `android/`.
 - **Every change to engine behaviour comes with a test.**
 
-By contributing, you agree that your contribution may be distributed under the project's
-license once it is published (see the README).
+By contributing, you agree that your contribution is licensed under the project's license,
+the GNU General Public License version 3 or later (see [LICENSE](LICENSE)).
 
 Please follow the [Code of Conduct](CODE_OF_CONDUCT.md).
