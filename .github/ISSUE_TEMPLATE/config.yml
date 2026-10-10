@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: নিরাপত্তা সমস্যা / Security vulnerability
-    url: https://github.com/mahbubul-faizaexpress/july_bangla_keyboard/security/advisories/new
+    url: https://github.com/promahbubul/july_bangla_keyboard/security/advisories/new
     about: নিরাপত্তা সমস্যা প্রকাশ্যে নয়, এখানে গোপনে জানান / Report privately
   - name: ব্যবহার নির্দেশিকা / User guide
     url: https://mahbubul-faizaexpress.github.io/july_bangla_keyboard/guide.html

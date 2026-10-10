@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var REPO = "https://github.com/mahbubul-faizaexpress/july_bangla_keyboard";
+  var REPO = "https://github.com/promahbubul/july_bangla_keyboard";
   var LATEST = REPO + "/releases/latest/download/";
 
   // Everything a download button needs, per platform.

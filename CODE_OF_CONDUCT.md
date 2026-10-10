@@ -22,7 +22,7 @@ channel that represents the project.
 ## Enforcement
 
 Report problems to the maintainers through a
-[private security advisory](https://github.com/mahbubul-faizaexpress/july_bangla_keyboard/security/advisories/new)
+[private security advisory](https://github.com/promahbubul/july_bangla_keyboard/security/advisories/new)
 or, if that is not suitable, through an issue marked "conduct".
 
 Maintainers may edit or remove content, and may warn or ban participants who break this

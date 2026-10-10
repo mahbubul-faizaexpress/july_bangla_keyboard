@@ -5,7 +5,7 @@ A keyboard sees everything a person types, so security reports have top priority
 ## Reporting a vulnerability
 
 **Do not open a public issue.** Report it privately through
-[GitHub security advisories](https://github.com/mahbubul-faizaexpress/july_bangla_keyboard/security/advisories/new).
+[GitHub security advisories](https://github.com/promahbubul/july_bangla_keyboard/security/advisories/new).
 Include:
 
 - the affected version and platform
