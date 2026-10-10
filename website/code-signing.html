@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>পাতাটি পাওয়া যায়নি — জুলাই বাংলা কীবোর্ড</title>
-  <meta name="description" content="পাতাটি পাওয়া যায়নি।">
+  <title>Code signing policy — জুলাই বাংলা কীবোর্ড</title>
+  <meta name="description" content="Code signing policy of July Bangla Keyboard: how releases are built, team roles and privacy.">
   <meta name="theme-color" content="#1b1d4e">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="জুলাই বাংলা কীবোর্ড">
-  <meta property="og:title" content="পাতাটি পাওয়া যায়নি — জুলাই বাংলা কীবোর্ড">
-  <meta property="og:description" content="পাতাটি পাওয়া যায়নি।">
+  <meta property="og:title" content="Code signing policy — জুলাই বাংলা কীবোর্ড">
+  <meta property="og:description" content="How July Bangla Keyboard releases are built, approved and signed.">
   <meta property="og:image" content="assets/july36.jpg">
   <link rel="icon" href="assets/favicon.png" type="image/png">
   <link rel="apple-touch-icon" href="assets/logo.png">
@@ -38,16 +38,53 @@
 </header>
 
 <main id="main">
-  <section class="page-head" style="padding-bottom:120px">
+  <section class="page-head">
     <div class="wrap wrap-narrow">
-      <h1>পাতাটি পাওয়া যায়নি</h1>
-      <p>ঠিকানাটি হয়তো বদলে গেছে। নিচের যেকোনো জায়গা থেকে আবার শুরু করুন।</p>
-      <div class="hero-cta" style="justify-content:center">
-        <a class="btn btn-primary" href="index.html">হোম পাতা</a>
-        <a class="btn btn-ghost" href="download.html">ডাউনলোড</a>
-      </div>
+      <h1>Code signing policy</h1>
+      <p>কোড স্বাক্ষর নীতি — কে, কীভাবে আমাদের প্রকাশিত ফাইল তৈরি ও অনুমোদন করে।</p>
     </div>
   </section>
+
+  <article class="article">
+    <div class="wrap wrap-narrow">
+      <p class="updated">Last updated: 10 October 2026</p>
+
+      <h2>Status</h2>
+      <p>We have applied for free code signing provided by <a href="https://signpath.io">SignPath.io</a>, with a certificate by <a href="https://signpath.org">SignPath Foundation</a>. Until the application is approved, our releases are <strong>not code-signed</strong>; verify downloads with the <code>SHA256SUMS.txt</code> file attached to each <a href="https://github.com/promahbubul/july_bangla_keyboard/releases">release</a>.</p>
+
+      <h2>How releases are built</h2>
+      <ul>
+        <li>Every release is built from the public source code in the <a href="https://github.com/promahbubul/july_bangla_keyboard">GitHub repository</a> by GitHub Actions (<code>.github/workflows/release.yml</code>), from a version tag. No release binary is built on a personal computer.</li>
+        <li>The workflow builds the 64-bit and 32-bit text service and the companion program, runs all tests, and compiles the installer.</li>
+        <li>Only this project's own binaries are signed. The product name in every signed file is “July Bangla Keyboard”.</li>
+      </ul>
+
+      <h2>Team roles</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Role</th><th>Members</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Committers and reviewers</strong></td><td><a href="https://github.com/promahbubul">Mahbubul Alam (@promahbubul)</a></td></tr>
+            <tr><td><strong>Approvers</strong></td><td><a href="https://github.com/promahbubul">Mahbubul Alam (@promahbubul)</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <ul>
+        <li>Changes from people outside the team arrive as pull requests and are reviewed by a team member before they are merged.</li>
+        <li>Every signing request is approved manually by an approver.</li>
+        <li>Team members must use multi-factor authentication for the source repository and for SignPath.</li>
+      </ul>
+
+      <h2>Privacy policy</h2>
+      <p>This program will not transfer any information to other networked systems. It has no network access, telemetry, analytics or advertising. See the <a href="privacy.html">privacy policy</a>.</p>
+
+      <h2>Installing and removing</h2>
+      <p>The installer adds a Windows keyboard (text service) and, if you choose, a start-up entry for the status bar. It asks for administrator permission and lists these choices before installing. Windows Settings → Apps → “July Bangla Keyboard” → Uninstall removes everything it installed.</p>
+
+      <h2>Reporting a problem</h2>
+      <p>If you believe a signed file from this project is not what it claims to be, report it privately through a <a href="https://github.com/promahbubul/july_bangla_keyboard/security/advisories/new">security advisory</a>.</p>
+    </div>
+  </article>
 </main>
 
 <footer class="footer">

@@ -10,6 +10,7 @@ requests. The fonts are self-hosted. Open `index.html` in a browser to preview i
 | `guide.html` | Getting started, modes, typing rules, troubleshooting, FAQ |
 | `about.html` | The name, principles, how to contribute, contact |
 | `privacy.html`, `terms.html` | Privacy policy, terms of use, license, trademarks, credits |
+| `code-signing.html` | Code signing policy (required by SignPath Foundation): build, team roles, privacy |
 | `404.html` | Not-found page |
 
 Notes:
