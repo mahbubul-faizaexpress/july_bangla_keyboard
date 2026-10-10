@@ -14,7 +14,7 @@ Sources: [MSI/EXE package requirements](https://learn.microsoft.com/en-us/window
 |---|---|---|
 | 1 | Open-source licence (needed for free signing) | ✅ GPL-3.0-or-later |
 | 2 | Automated release build (`.github/workflows/release.yml`) | ✅ |
-| 3 | Installer and all PE files code-signed | ❌ no certificate yet |
+| 3 | Installer and all PE files code-signed | ⏳ applied to SignPath Foundation on 2026-10-10; waiting for their answer |
 | 4 | Silent install tested (`/VERYSILENT /SUPPRESSMSGBOXES /NORESTART`) | ⏳ supported by Inno Setup; not yet run |
 | 5 | Offline, standalone installer | ✅ |
 | 6 | Versioned HTTPS download URL that never changes | ✅ `…/releases/download/v<version>/JulyBanglaKeyboard-Setup.exe` |
