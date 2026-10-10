@@ -274,6 +274,7 @@ kbd {
 .platform .btn { width: 100%; }
 .platform-soon { background: transparent; box-shadow: none; border-style: dashed; }
 .platform-soon .soon-text { color: var(--muted); font-size: 16px; flex: 1; margin-bottom: 24px; }
+.fineprint-box + .fineprint-box { margin-top: -72px; }
 .fineprint-box { margin: 8px auto 96px; max-width: 760px; text-align: center; color: var(--muted); font-size: 15px; }
 
 /* ---------- Article pages ---------- */
