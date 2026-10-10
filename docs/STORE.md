@@ -8,6 +8,26 @@ submission. See [RELEASE.md](RELEASE.md) for the gates.
 Sources: [MSI/EXE package requirements](https://learn.microsoft.com/en-us/windows/apps/publish/publish-your-app/msi/app-package-requirements),
 [IME requirements](https://learn.microsoft.com/en-us/windows/apps/develop/input/input-method-editor-requirements).
 
+## Why not MSIX
+
+MSIX would give free Microsoft signing, but a TSF text service cannot be packaged that way.
+Microsoft's own [MSIX preparation guide](https://learn.microsoft.com/en-us/windows/msix/desktop/desktop-to-uwp-prepare)
+rules out each thing a keyboard needs:
+
+- **Loaded into other programs.** "Your app's modules are loaded in-process to processes
+  that are not in your Windows app package. This isn't permitted." A text service is exactly
+  that: Windows loads `JulyTip.dll` into Word, Chrome and every other app.
+- **Machine-wide registration.** "Any attempt by your application to create an HKLM key …
+  will result in an access-denied failure." TSF profiles are registered under HKLM.
+- **Administrator rights.** "Apps that require elevation for any part of their
+  functionality won't be accepted into the Store."
+
+Microsoft's IME guidance says the same from the other side: third-party IMEs "are not
+distributed or certified by the Windows Store" as packages, are installed by an installer,
+and "must be digitally signed"
+([third-party IMEs](https://learn.microsoft.com/en-us/windows/win32/w8cookbook/third-party-input-method-editors)).
+So the signature is needed for a keyboard in any case, with or without the Store.
+
 ## Checklist
 
 | # | Item | Status |
